@@ -1,0 +1,548 @@
+%\documentclass[draft,10pt]{beamer}
+\documentclass[10pt]{beamer}
+
+\usepackage[english,polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+
+\usepackage{define}
+
+\eventtitle{Programowanie obiektowe w języku C++}
+\title{Programowanie obiektowe w języku C++}
+\author[shortname]{Stanis{\l}aw Gepner}
+\institute[shortinst]{sgepner@meil.pw.edu.pl}
+\date{}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{navigation symbols}[]
+
+\begin{document}
+
+\frame{
+    \titlepage
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Regulamin przedmiotu}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame{
+  \frametitle{Regulamin przedmiotu i zasady zaliczenia}
+  \vspace{-0.1cm}
+  \centering
+  \includegraphics[height=\textheight, keepaspectratio, trim={1.6cm 0cm 0cm 1cm}, clip]{zasady.pdf}
+}
+
+% \begin{frame}{Zapisy na laboratoria}
+% 	Proponowane terminy laboraorium:
+% 	\begin{itemize}
+% 		\item 2 x Środa 8:15-10:00
+% 		\item 1 x Czwartek 10:15-12:00
+% 		\item 2 x Czwartek 12:15-14:00
+% 	\end{itemize}
+% \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Literatura}
+  \begin{itemize}
+    \item Internet
+    \item C++ programming tutorials
+    \item Stack Overflow
+    \item C++ reference - {\color{red} \bf cppreference.com}
+    \item Kompilator online: http://cpp.sh/, {\color{red} \bf http://coliru.stacked-crooked.com/}
+    \item Google, Bing, Duck Duck Go
+    \item Visual Studio 2015, Community or Visual Studio 2013, GCC
+    \item Jak pompki - trzeba ćwiczyć, nie czytać!
+  \end{itemize}
+\end{frame}
+
+\frame{
+	\frametitle{Obiektowo?}
+	\framesubtitle{Proceduralnie np. C, Fortran}
+	\centering
+	Czyli poprzez dzielenie zadania na procedury wykonujące określone operacje.
+	
+	\begin{itemize}
+		\item Zmienne,
+		\item Dane,
+		\item Procedury
+		\item Wywoływanie procedur, przekazywanie danych przez argumenty
+	\end{itemize}
+	
+	\includegraphics[height=3cm, keepaspectratio]{procedury.png}
+
+	{\tiny Public domain}
+}
+
+\frame{
+	\frametitle{Obiektowo?}
+	\centering
+	Obiekt posiada zarówno dane jak i procedury operujące na nich.
+	
+	\begin{itemize}
+		\item Obiekty mogą ze sobą współdziałać
+		\item Program można składać z różnych obiektów - modularny
+		\item Obiekty (powinny) są od siebie niezależne (do pewnego stopnia)
+		\item Obiekt to instancja klasy. Posiada strukturę danych i metody jej manipulacji
+	\end{itemize}
+	
+		\includegraphics[height=3cm, keepaspectratio]{object}
+		
+		{\tiny Public domain}
+}
+
+\frame{
+	\frametitle{Obiektowo}
+	\centering
+	\begin{itemize}
+	  \item Abstrakcyjność
+	  \item Hermetyzacja (enkapsulacja)
+	  \item Dziedziczenie i polimorfizm
+	\end{itemize}
+	\begin{itemize}
+		\item Hierarchia klas
+		\item Organizacja kodu
+		\item Dostęp do różnych obiektów poprzez jednorodny interfejs
+		\item Łatwość utrzymania i rozwoju
+	\end{itemize}
+}
+
+\begin{frame}[fragile]
+    \frametitle{Linus Torvalds}
+  \framesubtitle{Kernel Linuxa, git, bóstwo pomniejsze ...}
+  \centering
+  \includegraphics[height=4cm, keepaspectratio]{linus-torvalds}
+  
+    (...)In other words, the only way to do good, efficient, and system-level and portable C++ ends up to limit yourself to all the things that are  basically available in C. And limiting your project to C means that people don't screw that up, and also means that you get a lot of programmers that do actually understand low-level issues and don't screw things up with any
+ idiotic 'object model' crap.(...)
+
+\end{frame}
+
+\frame{
+  \frametitle{ C language}
+    \begin{itemize}
+      \item Dennis Ritchie - AT\&T Bell Laboratories - 1972
+      \item The C Programming Language - first specification - 1978
+      \item 1989: ANSI C89, 1990: ISO C90
+      \item 1999: C99 standard
+      \item Still in use, and here to stay for a while
+      \begin{itemize}
+        \item Wide range of applications. OS, microcontrollers, ATM systems ...
+        \item Efficiency and performance
+        \item Provides low level access
+        \item Influenced C++, Obj. C, C\#, Java, ...
+      \end{itemize}
+    \end{itemize}
+}
+
+\frame{
+  \frametitle{ C++}
+    \begin{itemize}
+      \item Bjarne Stroustrup - AT\&T Bell Laboratories - 1979 'C with classes'
+      \item C++ używany przez AT\&T - 1983
+      \item Pierwsza specyfikacja - 1985
+    \end{itemize}
+    \centering
+    \includegraphics[height=4cm, keepaspectratio]{bjarne-stroustrup}
+}
+
+\frame{
+  \frametitle{ C++}
+  Język ogolnego przeznaczenia
+    \begin{itemize}
+      \item Lepszy C
+      \item Umożliwia abstrakcję
+      \item Pozwala na programowanie proceduralne i obiektowe
+      \item 'Rozumie' C
+      \item Kontrola typów - type safty (printf)
+    \end{itemize}
+}
+
+\begin{frame}[fragile]
+  \frametitle{ C++}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \begin{lstlisting}
+#include <stdio.h>
+int main()
+{
+    int a;
+    scanf("%d", &a);
+    printf("Hello! a=%d\n ", a);
+}
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{lstlisting}
+#include <iostream>
+int main()
+{
+    int a;
+    std::cin >> a ;
+    std::cout << "Hello! a=" << a << std::endl;
+}
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+  \centering
+  \begin{itemize}
+    \item Type resolution at compilation
+    \item bez formatowania
+    \item Wygodniej?
+  \end{itemize}
+  
+\end{frame}
+
+\begin{frame}
+  \frametitle{namespace}
+    
+  \begin{itemize}
+    \item namespace nazwa \{ deklaracje \} - ustala przestrzeń nazw
+    \item namespace A \{ namespace B \{ namespace C \{
+    \item nazwa1::nazwa2 - :: operator zasięgu - użyj nazwa2 z nazwa1
+    \item using namespace nazwa; - ostrożnie!
+    \item using nazwa1::nazwa2; - nazwa2 jest teraz w zasięgu
+    \item namespace nazwa1 = nazwa2; - alias przestrzeni
+  \end{itemize}
+    
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{namespace}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \begin{lstlisting}
+#include <iostream>
+namespace A{int fun();}
+
+namespace B {namespace C {namespace D{
+    int fun() {return 3;}
+} } }
+
+int main()
+{
+    int a = A::fun();
+    int b = B::C::D::fun();
+    std::cout << "Hello !! a=" << a << " b=" << b << std::endl;
+
+    using namespace B::C;
+    a=D::fun();
+    std::cout << "Hello !! a=" << a << " b=" << b << std::endl;
+
+    using D::fun;
+    int c = fun();
+    std::cout << "Hello !! a=" << a << " b=" << b << " c=" << c << std::endl;
+      \end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{lstlisting}
+    namespace AA=B::C::D;
+    namespace BB=A;
+    a = AA::fun();
+    b = BB::fun();
+    std::cout << "Hello !! a=" << a << " b=" << b << std::endl;
+
+    using namespace AA;
+    using namespace BB;
+    a = AA::fun();
+    b = BB::fun();
+    std::cout << "Hello !! a=" << a << " b=" << b << std::endl;
+
+    a = fun();
+    b = fun();
+    std::cout << "Hello !! a=" << a << " b=" << b << std::endl;
+}
+
+int A::fun()
+{
+    return 1;
+}
+      \end{lstlisting}
+    \end{column}
+  \end{columns}
+  \centering
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{vector}
+\begin{lstlisting}
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main(){
+    vector<int> a(5);
+    a[0] = 10;
+    for(int i=1; i<a.size(); ++i){
+        a[i] = 10*(i+1);
+        cout << a[i] << endl;
+    }
+    cout << endl;
+    a.pop_back();
+    a.push_back(1);
+    for(int i=0; i<a.size(); ++i)
+        cout << a[i] << endl;
+}
+\end{lstlisting}
+
+\begin{itemize}
+  \item Dynamiczna - resize(20)
+  \item Ciągla w pamięci - dostęp przez [ ]
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{new \& delete}
+\begin{lstlisting}
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+struct D{
+    int a;
+};
+
+int main(){
+    int n=10;
+    D * p = new D;
+    D * tab = new D[50];
+    tab[8].a = 1;
+    cout << tab[8].a << endl;
+    delete p;
+    delete []tab;
+}
+\end{lstlisting}
+
+\begin{itemize}
+  \item new zamiast malloc
+  \item delete zamiast free
+  \item kontrola typu, malloc zwracał *void
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{referencja \&}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \begin{lstlisting}
+#include <iostream>
+
+using namespace std;
+
+void fun1(int a){
+  a=1;
+}
+void fun2(int *pa){
+  *pa=2;
+}
+void fun3(int & a){
+  a=3;
+}
+
+int main(){
+  int a = 6;
+  cout << a << endl;
+  fun1(a);
+  cout << a << endl;
+  fun2(&a);
+  cout << a << endl;
+  fun3(a);
+  cout << a << endl;
+  int & b; // this will not compile
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Przypomina wskaźnik
+        \item Można przypisać tylko raz
+        \item Nie może istnieć niezainicjalizowana
+        \item Dalej jak zmienna
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{const}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+      \begin{lstlisting}
+#include <iostream>
+
+using namespace std;
+
+#define sin cos
+#define true false
+#define fabs abs
+#define PI 3.141592
+const double pi=3.141592
+
+pi = 3; //compiler error
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item \#define to zło
+        \item const jest sprawdzane w czasie kompilacji
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Klasa}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+struct A{
+  int a;
+};
+class B{
+  public:
+    int a;
+  private:
+    A b;
+}
+class C{
+  public:
+    A a;
+    B b;
+    int c[5];
+};
+
+int main(){
+  C c;
+  c.a.a=0;
+  c.b.a=3;
+  c.c[2]=9;
+  c.b.b.z=2; //Will not work
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Podobna do struct ale z hermetyzacją
+        \item i kilkoma innymi dodatkami
+        \item Atrybutami mogą być typy proste, inne klasy, kolekcje, wskaźniki i referencje
+        \item Modyfikatory dostępu: \textit{public}, \textit{private} i \textit{protected}
+        \item domyślnie wszystko private
+        \item dostępne przez operator . lub $->$
+        \item Przykład ...
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Funkcje w klasie? Czyli metody!}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+
+using namespace std;
+
+class person{
+  public:
+    void setAge(int a){ mAge=a; }
+    int getAge(){ return mAge; }
+    void printtS(){cout << mS << endl;}
+    void calcS();
+  private:
+    int mAge;
+    int mS;
+};
+
+void person::calcS(){
+  mS = 2 * mAge;
+}
+
+int main(){
+  person p;
+  p.setAge(3);
+  p.calcS();
+  cout << p.getAge() << endl;
+  p.printtS();
+}
+
+
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Definicja w ciele klasy (pomiędzy {})
+        \item albo poza - z deklaracją w ciele
+        \item Metoda ma dostęp do wszystkich atrybutów klasy  
+        \item Ukrywaj atrybuty, wystawiaj interfejs     
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Konstruktor i destruktor}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\vspace{-0.2cm}
+\begin{lstlisting}
+#include <iostream>
+#include <stdlib.h>
+
+using namespace std;
+
+class collection{
+public:
+  collection(){size=0; tab=NULL;}
+  collection(int s) : size(s) {allocate();}
+  collection(collection& c){
+    size=getSize();
+    //tab = ????
+    }
+  ~collection(){
+    cout << "The cleaning service!" << endl;
+    delete []tab;
+  }
+  void setSize(int a){ size=a; }
+  int getSize(){ return size; }
+  void allocate();
+  int& rTab(int i)
+  { return tab[i];}
+private:
+  int size;
+  int * tab;
+};
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+void collection::allocate()
+{
+  tab = new int[size];
+}
+
+int main(){
+  ...
+}
+\end{lstlisting}
+      \begin{itemize}
+        \item Metody specjalne, tworzone domyslnie
+        \item Definicja w lub poza ciałem
+        \item Destruktor wywoływany przed zwolnieniem zasobów
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+
+\end{document}
