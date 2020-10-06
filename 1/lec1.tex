@@ -26,13 +26,13 @@
 \section{Regulamin przedmiotu}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\frame{
-  \frametitle{Regulamin przedmiotu i zasady zaliczenia}
-  \vspace{-0.1cm}
-  \centering
-  \includegraphics[height=\textheight, keepaspectratio, trim={1.6cm 0cm 0cm 1cm}, clip]{zasady.pdf}
-}
-
+% \frame{
+%   \frametitle{Regulamin przedmiotu i zasady zaliczenia}
+%   \vspace{-0.1cm}
+%   \centering
+%   \includegraphics[height=\textheight, keepaspectratio, trim={1.6cm 0cm 0cm 1cm}, clip]{zasady.pdf}
+% }
+%
 % \begin{frame}{Zapisy na laboratoria}
 % 	Proponowane terminy laboraorium:
 % 	\begin{itemize}
@@ -61,10 +61,10 @@
 \end{frame}
 
 \frame{
-	\frametitle{Obiektowo?}
-	\framesubtitle{Proceduralnie np. C, Fortran}
+	\frametitle{Proceduralnie, czyli jak?}
+	\framesubtitle{np. C, Fortran}
 	\centering
-	Czyli poprzez dzielenie zadania na procedury wykonujące określone operacje.
+	Czyli poprzez dzielenie zadania na procedury wykonujące określone operacje i przekazujące pomiędzy sobą przetwarzane dane.
 	
 	\begin{itemize}
 		\item Zmienne,
@@ -79,15 +79,16 @@
 }
 
 \frame{
-	\frametitle{Obiektowo?}
+	\frametitle{Obiektowo, czyli jak?}
+	\framesubtitle{np. C++, Java, C\# ...}
 	\centering
-	Obiekt posiada zarówno dane jak i procedury operujące na nich.
+	Zagadnienie dzielimy na obiekty łączące w sobie zarówno dane, jak i operujące na nich procedury (metody).
 	
 	\begin{itemize}
 		\item Obiekty mogą ze sobą współdziałać
-		\item Program można składać z różnych obiektów - modularny
+		\item Program można składać z różnych obiektów - zwiększa się modularność
 		\item Obiekty (powinny) są od siebie niezależne (do pewnego stopnia)
-		\item Obiekt to instancja klasy. Posiada strukturę danych i metody jej manipulacji
+		\item Obiekt to instancja klasy. Klasy są przepisem na zawartą w obiekcie strukturę danych i metody manipulacji
 	\end{itemize}
 	
 		\includegraphics[height=3cm, keepaspectratio]{object}
@@ -96,34 +97,29 @@
 }
 
 \frame{
-	\frametitle{Obiektowo}
-	\centering
+	\frametitle{Obiektowość:}
+
+  Pozwala na wprowadzenie następujących koncepcji:
 	\begin{itemize}
-	  \item Abstrakcyjność
-	  \item Hermetyzacja (enkapsulacja)
-	  \item Dziedziczenie i polimorfizm
+	  \item Abstrakcyjność, czyli opis problemu na wyższym, oderwanym od poszczególnych zadań poziomie.
+	  \item Hermetyzacja (enkapsulacja), czyli kontrolę dostępu.
+	  \item Polimorfizm, czyli wielopostaciowość.
 	\end{itemize}
+	
+  \vspace*{5pt}
+  A to pozwala na:
+	
 	\begin{itemize}
-		\item Hierarchia klas
-		\item Organizacja kodu
-		\item Dostęp do różnych obiektów poprzez jednorodny interfejs
-		\item Łatwość utrzymania i rozwoju
+		\item Hierarchię klas.
+		\item Lepszą (być może) organizację kodu.
+		\item Dostęp do różnych obiektów poprzez jednorodny interfejs.
+		\item Potencjalną łatwość utrzymania, rozwoju i współdzielenia kodu.
 	\end{itemize}
 }
 
-\begin{frame}[fragile]
-    \frametitle{Linus Torvalds}
-  \framesubtitle{Kernel Linuxa, git, bóstwo pomniejsze ...}
-  \centering
-  \includegraphics[height=4cm, keepaspectratio]{linus-torvalds}
-  
-    (...)In other words, the only way to do good, efficient, and system-level and portable C++ ends up to limit yourself to all the things that are  basically available in C. And limiting your project to C means that people don't screw that up, and also means that you get a lot of programmers that do actually understand low-level issues and don't screw things up with any
- idiotic 'object model' crap.(...)
-
-\end{frame}
-
 \frame{
-  \frametitle{ C language}
+  \frametitle{Trochę historii}
+  \framesubtitle{C language}
     \begin{itemize}
       \item Dennis Ritchie - AT\&T Bell Laboratories - 1972
       \item The C Programming Language - first specification - 1978
@@ -140,7 +136,8 @@
 }
 
 \frame{
-  \frametitle{ C++}
+  \frametitle{Trochę historii}
+  \framesubtitle{C++}
     \begin{itemize}
       \item Bjarne Stroustrup - AT\&T Bell Laboratories - 1979 'C with classes'
       \item C++ używany przez AT\&T - 1983
@@ -150,20 +147,31 @@
     \includegraphics[height=4cm, keepaspectratio]{bjarne-stroustrup}
 }
 
+\begin{frame}[fragile]
+    \frametitle{Linus Torvalds}
+  \framesubtitle{Kernel Linuxa, git, bóstwo pomniejsze ...}
+  \centering
+  \includegraphics[height=4cm, keepaspectratio]{linus-torvalds}
+  
+    (...)In other words, the only way to do good, efficient, and system-level and portable C++ ends up to limit yourself to all the things that are  basically available in C. And limiting your project to C means that people don't screw that up, and also means that you get a lot of programmers that do actually understand low-level issues and don't screw things up with any
+ idiotic 'object model' crap.(...)
+
+\end{frame}
+
 \frame{
   \frametitle{ C++}
-  Język ogolnego przeznaczenia
+  Język ogólnego przeznaczenia
     \begin{itemize}
       \item Lepszy C
       \item Umożliwia abstrakcję
-      \item Pozwala na programowanie proceduralne i obiektowe
-      \item 'Rozumie' C
-      \item Kontrola typów - type safty (printf)
+      \item Pozwala na programowanie zarówno proceduralne jak i obiektowe
+      \item 'Rozumie' C - pozwala na kompilację kodu napisanego w C
+      \item Rozbudowuję kontrolę typów - type safty, w stosunku do C (np. funkcja printf nie kontroluje typu danych)
     \end{itemize}
 }
 
 \begin{frame}[fragile]
-  \frametitle{ C++}
+  \frametitle{C vs C++}
   \begin{columns}
     \begin{column}{0.48\textwidth}
       \begin{lstlisting}
@@ -190,16 +198,18 @@ int main()
   \end{columns}
   \centering
   \begin{itemize}
-    \item Type resolution at compilation
-    \item bez formatowania
-    \item Wygodniej?
+    \item Zarówno scanf i printf muszą zostać poinformowane o typie poprzez formatowanie: \%d, a konkretna implementacja wybierana jest w czasie działania programu.
+    \item Implementacje cin i cout są wybierane na podstawie typu zmiennej, już w czasie kompilacji.
+    \item Być może jest wygodniej :)
   \end{itemize}
   
 \end{frame}
 
 \begin{frame}
-  \frametitle{namespace}
-    
+  \frametitle{C++ - przestrzenie nazw - namespace}
+  
+  Pozwalają na organizację kodu poprzez zamykanie kodu w 
+  
   \begin{itemize}
     \item namespace nazwa \{ deklaracje \} - ustala przestrzeń nazw
     \item namespace A \{ namespace B \{ namespace C \{
@@ -480,10 +490,10 @@ int main(){
     \end{column}
     \begin{column}{0.48\textwidth}
       \begin{itemize}
-        \item Definicja w ciele klasy (pomiędzy {})
+        \item Definicja w ciele klasy (pomiędzy \{\})
         \item albo poza - z deklaracją w ciele
         \item Metoda ma dostęp do wszystkich atrybutów klasy  
-        \item Ukrywaj atrybuty, wystawiaj interfejs     
+        \item Zasada: ukrywaj atrybuty, wystawiaj interfejs     
       \end{itemize}
     \end{column}
   \end{columns}
