@@ -1,0 +1,1019 @@
+%\documentclass[draft,10pt]{beamer}
+\documentclass[10pt]{beamer}
+
+\usepackage[english,polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+
+\usepackage{define}
+
+\eventtitle{Programowanie obiektowe w języku C++}
+\title{Programowanie obiektowe w języku C++}
+\author[shortname]{Stanis{\l}aw Gepner}
+\institute[shortinst]{sgepner@meil.pw.edu.pl}
+\date{}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{navigation symbols}[]
+
+\begin{document}
+
+\frame{
+    \titlepage
+}
+
+\section{Wspomnienia}
+
+\begin{frame}
+  \frametitle{Co już wiemy}
+  
+  \centering
+  \begin{enumerate}
+    \item Proceduralnie a obiektowo
+    \item Obiekt to instancja klasy, łączy dane i metody
+    \item Co ++ daje C? - nowe elementy języka
+    \begin{itemize}
+      \item namespace
+      \item referencja \&
+      \item new delete
+      \item ...
+    \end{itemize}
+    \item Coś wspominaliśmy o klasach ...
+  \end{enumerate}
+\end{frame}
+
+\section{Klasy (i struktury)}
+
+\begin{frame}[fragile]
+  \frametitle{Struktura}
+  \framesubtitle{C}
+  \centering
+  \begin{itemize}
+    \item Dostępne w C, \textit{struct\{\};}.
+    \item Pozwalają na grupowanie danych, brak metod (prawie)
+    \item Definiuje nowy typ zmiennej, zmienne tego typu można deklarować
+    \item Brak hermetyzacji
+  \end{itemize}
+  
+  \begin{lstlisting}
+#include <stdio.h>
+
+struct student{
+  int numerindeksu;
+  float ocenazcpp;
+  void  (*pprint)(struct student*);
+};
+void print(struct student* self)
+{
+  printf("Student %d recived %1.1f \n ", self->numerindeksu, self->ocenazcpp);
+}
+int main(){
+  struct student s1;
+  s1.pprint = print;
+  s1.numerindeksu = 207778;
+  s1.ocenazcpp = 2;
+  s1.pprint(&s1);
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Struktura}
+  \framesubtitle{C++}
+  \centering
+  \begin{itemize}
+    \item Rozszerzone możliwości dostępne w C++
+    \item Może mieć metody
+    \item Dostępna kontrola dostępu - hermetyzacja
+    \item Domyślnie wszystko \textit{public}, w klasie zaś, \textit{private}
+  \end{itemize}
+  
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+struct student{
+  int numerindeksu;
+  void setOcena(float o){ocenazcpp=o;}
+  void print(void)
+  {
+    cout << "Student " << numerindeksu << " recived " << ocenazcpp << endl;
+  }
+  float ocenazcpp;
+};
+
+int main(){
+  student s1;
+  s1.numerindeksu = 207778;
+  s1.setOcena(2.5);
+  
+  s1.print();
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Klasa}
+  \framesubtitle{\textit{class\{...\}}}
+  \centering
+  
+  \begin{itemize}
+    \item Klasa to definicja dla \textit{obiektu}, a obiekt to \textit{instancja} klasy.
+    \item Klasa opisuje dane oraz interfejs.
+    \item Interfejs to opis sposobu komunikacji z instancjami klasy.
+    \item Podobna do struktury
+  \end{itemize}
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+class student{
+  public:
+    int numerindeksu;
+    void setOcena(float o){ocenazcpp=o;}
+  void print(void)
+  {
+    cout << "Student " << numerindeksu << " recived " << ocenazcpp << endl;
+  }
+  private:
+    float ocenazcpp;
+};
+int main(){
+  student s1;
+  s1.numerindeksu = 207778;
+  s1.setOcena(2.5);
+  
+  s1.print();
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Klasa}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+class foobar{
+//class body
+
+//atrybuty
+
+//metody
+...
+};
+
+//metody cd.
+
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Definicja nowej klasy zaczyna się od słówka \textit{class}
+        \item Dalej nazwa - identyfikator
+        \item Ciało klasy zawarte jest między \{ \} zakończone ;
+        \item Atrybuty i metody w ciele klasy
+        \item Ciało metod może być poza klasą
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Klasa}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+class foobar{
+public:
+  int foo;
+  int fun(){return foo; }
+};
+
+foobar fu;
+fu.foo = 5;
+int a = fu.fun();
+
+foobar *p = new foobar;
+p->foo;
+int b = p->fun();
+
+delete p;
+
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Z zewnątrz dostęp przez .\\
+        np.: \textit{foobar.foo}\\
+        lub \textit{foobar.fun()}
+        \item lub przez -$>$ jeżeli wskaźnik\\
+        np.: \textit{p-{$>$}foo}\\
+        lub \textit{p-{$>$}fun()}
+        \item Metody klasy mają dostęp do wszystkiego\\
+        przez nazwę \textit{return foo;}\\
+        lub przez \textit{this-{$>$}foo1;}
+        \item Atrybutami mogą być typy proste, inne klasy, kolekcje, wskaźniki i referencje ...
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Funkcje w klasie? Czyli metody!}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+
+using namespace std;
+
+class person{
+  public:
+    void setAge(int a){ mAge=a; }
+    int getAge(){ return mAge; }
+    void printtS(){cout << mS << endl;}
+    void calcS();
+  private:
+    int mAge;
+    int mS;
+};
+
+void person::calcS(){
+  mS = 2 * mAge;
+}
+
+int main(){
+  person p;
+  p.setAge(3);
+  p.calcS();
+  cout << p.getAge() << endl;
+  p.printtS();
+}
+
+
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Mogą być w ciele
+        \item albo poza - z deklaracją w ciele i operatorem zasięgu ::
+        \item w .h lub .cpp
+        \item Metoda ma dostęp do wszystkich atrybutów klasy  
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Metody}
+  \frametitle{Domyślne argumenty}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+class person{
+  public:
+    void setAge(int a = 0)
+    {mAge=a;}
+    void setS(int s=0);
+    void print()
+    {
+      cout << mAge << " " << mS << endl;
+    }
+  private:
+    int mAge;
+    int mS;
+};
+
+void person::setS(int s){
+  mS = s;
+}
+
+int main(){
+  person p;
+  p.setAge();
+  p.setS();
+  p.print();
+}
+
+
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Na końcu listy argumentów
+        \item Jeżeli ciało w klasie to OK
+        \item Jeżeli metoda ma ciało poza klasą, to tylko w prototypie w klasie
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Klasa}
+  \framesubtitle{public: i private:}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+class foobar{
+public:
+  int foo;
+  int fun(){return foo1; }
+  int fun_other(foobar& rf)
+  {
+    return rf.fun1();
+  }
+private:
+  int foo1;
+  int fun1(){
+    return this->foo;
+  }
+};
+
+int main()
+{
+  foobar fu1, fu2;
+  fu1.foo = 5;
+  fu2.foo = 9;
+  
+  int a = fu1.fun_other(fu1);
+  int b = fu1.fun_other(fu2);
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item \textit{public:} i \textit{private:} określają widoczność, dostęp do członków klasy; atrybutów i metod
+        \item Definiują sekcje, wszystko w sekcji ma daną widoczność.
+        \item \textit{public:} nieograniczony dostęp z każdego miejsca i przez wszystko
+        \item \textit{private:} tylko metody instancji danej klasy mają dostęp
+        \item ... To znaczy inne obiekty tej samej klasy też ...
+        \item Kontrola w czasie kompilacji nie wykonania
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Klasa}
+  \framesubtitle{public: i private:}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+class foobar{
+public:
+  \\ metody
+private:
+  \\ dane 
+  \\ metody
+};
+
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item dane prywatne
+        \item metody publiczne
+        \item Bezpieczeństwo przed niepożądaną manipulacją
+        \item Ukrywaj atrybuty, wystawiaj interfejs
+        \item Jak bankomat
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Klasa}
+  \framesubtitle{public: i private:}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+class foobar{
+public:
+  void setFoo(int f){foo=f;}
+  int getFoo(){return foo;}
+  const int& cFoo(){return foo;}
+  int& rFoo(){return foo;}
+private:
+  int foo;
+};
+
+int main()
+{
+  foobar fu1,;
+  ...
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item atrybut int foo jest prywatny
+        \item dodano metody get/set do operowania
+        \item nowe słówko const
+        \item metoda \textit{const int\& cFoo()} zwraca referencje
+        \item metofa \textit{int\& rFoo()} też ...
+        \item Różnica? patrz przykład
+        \item Jak nie zapomnimy to wrócimy
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Tworzenie obiektu}
+  \framesubtitle{Konstruktor}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+class foobar{
+  private:
+    int a;
+    int b;
+};
+int main(){
+  std::cout << sizeof(foobar) << std::endl;
+  foobar f1; //obiekt f1 typu foobar isnieje
+  std::cout << sizeof(foobar) << std::endl;
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Domyślny, parametryczny, kopiujący, lista inicjalizacyjna ...
+        \item Konstruktor to specjalna metoda klasy
+        \item Jest wywoływana przy tworzeniu obiektu
+        \item Pamięć alokowana w chwili powołania instancji klasy
+        \item Jeżeli go nie stworzymy zrobi to kompilator
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Tworzenie obiektu}
+  \framesubtitle{Konstruktor domyślny}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+class foobar{
+  public:
+    foobar() {}
+  private:
+    int a;
+    int b;
+};
+int main(){
+  foobar f1;
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Jest zawsze
+        \item Powinien być w sekcji public:
+        \item ... chyba, że nie chcemy ...
+        \item składnia:\\ \textit{identyfikator() \{ ciało \}}
+        \item Jak każda metoda może być w lub poza ciałem klasy
+        \item Może mieć niepuste ciało
+        \item Przykład ...
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Tworzenie obiektu}
+  \framesubtitle{Konstruktor parametryczny}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+class foobar{
+  public:
+    foobar() {}
+    foobar(int aa, int bb=9)
+    {
+      a = aa;
+      b = bb;
+    }
+  private:
+    int a;
+    int b;
+};
+int main(){
+  foobar f1, f2(3), f3(3,4);
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Służy do przekazania argumentów
+        \item składnia:\\ \textit{identyfikator(argumenty)\\ \{ ciało \}}
+        \item Jak każda metoda może być w lub poza ciałem klasy
+        \item Może mieć domyślne parametry
+        \item Przykład ...
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Tworzenie obiektu}
+  \framesubtitle{Lista inicjalizacyjna}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+class foobar{
+  public:
+    foobar(){}
+    foobar(int aa, int bb=9)
+    : a(aa), b(bb) { }
+  private:
+    int a;
+    int b;
+};
+int main(){
+  foobar f1, f2(3), f3(3,4);
+  int c(9); //konsekwencja
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Ustawia wartość w czasie tworzenia obiektu
+        \item składnia:\\ \textit{identyfikator(argumenty) : var(val)\\ \{ ciało \}}
+        \item przydatne gdy obiekt przechowuje referencje
+        \item Czasem nie można w \{\}
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Tworzenie obiektu}
+  \framesubtitle{Konstruktor kopiujący}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+class foobar{
+  public:
+    foobar(){}
+    foobar(const foobar& f)
+    {
+      a = f.a;
+      b = f.b
+    }
+  private:
+    int a;
+    int b;
+};
+int main(){
+  foobar f1, f2(3), f3(3,4);
+  int c(9); //konsekwencja
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Jest zawsze (?)
+        \item Powinien być w sekcji public:
+        \item ... chyba, że nie chcemy ...
+        \item składnia:\\ \textit{identyfikator(iden\& i)
+        \\ \{ ciało \}}
+        \item Jak każda metoda może być w lub poza ciałem klasy
+        \item Może mieć niepuste ciało
+		    \begin{itemize}
+		    	\item Przy przekazywaniu z i do funkcji
+	      \end{itemize}		    
+        \item Przykład ...
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Niszczenie obiektu}
+  \framesubtitle{Destruktor}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\vspace{-0.2cm}
+\begin{lstlisting}
+#include <iostream>
+#include <stdlib.h>
+
+using namespace std;
+
+class collection{
+public:
+  collection(){size=0; tab=NULL;}
+  collection(int s) : size(s) {allocate();}
+
+  ~collection(){
+    cout << "The cleaning service!" << endl;
+    delete []tab;
+  }
+  void setSize(int a){ size=a; }
+  int getSize(){ return size; }
+  void allocate();
+  int& rTab(int i)
+  { return tab[i];}
+private:
+  int size;
+  int * tab;
+};
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+void collection::allocate()
+{
+  tab = new int[size];
+}
+\end{lstlisting}
+      \begin{itemize}
+        \item Odwrotność konstruktora
+        \item Wywoływany przy końcu życia obiektu
+        \item Nigdy nie wywoływany jawnie
+        \item Jest tylko jeden
+        \item Metody specjalna, tworzona domyślnie przez kompilator
+        \item Definicja w lub poza ciałem
+        \item \textit{{$\sim$} identyfikator(argumenty)\\ \{ ciało \}}
+        \item Destruktor wywoływany przed zwolnieniem zasobów
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% \begin{frame}[fragile]
+%   \frametitle{Zmienne statyczne}
+%   \begin{columns}
+%     \begin{column}{0.48\textwidth}
+% \vspace{-0.2cm}
+% \begin{lstlisting}
+% class foobar{
+%   public:
+%     static int a;
+%     int b = 5; // -std=c++11
+% };
+% int main(){
+%   foobar f1, f2;
+%   ...
+% }
+% \end{lstlisting}
+%     \end{column}
+%     \begin{column}{0.48\textwidth}
+%       \begin{itemize}
+%         \item Nowe słówko \textit{static}
+%         \item Współdzielone przez wszystkie instancje klasy
+%         \item Inicjalizacja poza ciałem bez słówka \textit{static}
+%         \item Można użyć bez instancji klasy!
+%         \item Można zmienić wartość
+%         \item Przykład:
+%       \end{itemize}
+%     \end{column}
+%   \end{columns}
+% \end{frame}
+%
+% \begin{frame}[fragile]
+%   \frametitle{Zmienne statyczne const ...}
+%   \begin{columns}
+%     \begin{column}{0.48\textwidth}
+% \vspace{-0.2cm}
+% \begin{lstlisting}
+% class foobar{
+%   public:
+%     static const int a;
+%     int b = 5; // -std=c++11
+% };
+% int main(){
+%   foobar f1, f2;
+%   ...
+% }
+% \end{lstlisting}
+%     \end{column}
+%     \begin{column}{0.48\textwidth}
+%       \begin{itemize}
+%         \item \textit{static const}
+%         \item Współdzielone przez wszystkie instancje klasy
+%         \item Inicjalizacja w ciele
+%         \item Można użyć bez instancji klasy!
+%         \item Nie można zmienić wartości
+%         \item Przykład:
+%       \end{itemize}
+%     \end{column}
+%   \end{columns}
+% \end{frame}
+%
+% \begin{frame}[fragile]
+%   \frametitle{Funkcje statyczne}
+%   \begin{columns}
+%     \begin{column}{0.48\textwidth}
+% \vspace{-0.2cm}
+% \begin{lstlisting}
+% #include <iostream>
+% using namespace std;
+% class foobar{
+%   public:
+%     static int a;
+%     int b;
+%     
+%     static void static_do(int new_d)
+%     {
+%       cout << "a=" << a << endl;
+%       a = new_d;
+%       //b = a; // nie wolno
+%     }
+% };
+% int foobar::a = 9;
+% int main(){
+%   foobar f1, f2, f3;
+%   cout << f1.a << endl;
+%   foobar::static_do(9);
+%   cout << f3.a << endl;
+% }
+% \end{lstlisting}
+%     \end{column}
+%     \begin{column}{0.48\textwidth}
+%       \begin{itemize}
+%         \item \textit{static typ nazwa()\{\}}
+%         \item Współdzielone przez wszystkie instancje klasy
+%         \item Można użyć bez instancji klasy!
+%         \item Może działać tylko na zmiennych, które są \textit{static}
+%         \item Przykład:
+%       \end{itemize}
+%     \end{column}
+%   \end{columns}
+% \end{frame}
+%
+% \section{Operatory}
+%
+% \begin{frame}[fragile]
+%   \frametitle{Operatory}
+%       \begin{itemize}
+%         \item Operator to może być symbol, np.: +, -, *, /
+%         \item albo \textit{new new[] delete []delete}
+%         \item albo konwersja typów (przemilczeć)
+%         \item W C++ użycie operatora jest on związane w wywołaniem metody
+%         \item C++ pozwala na definiowanie własnych operatorów
+%         \item Nie dla typów wbudowanych
+%         \item Definicje mogą być w ciele, albo poza
+%         \item Jedno i dwu argumentowe
+%         \item W zasadzie metoda może być dowolna
+%         \item Operator powinien wykonywać przewidywalną operację np: \\
+%         c=a+b nie powinien zmieniać a, b
+%         \item Jest tego dużo
+%       \end{itemize}
+% \end{frame}
+%
+% \begin{frame}[fragile]
+%   \frametitle{Operatory}
+%   \framesubtitle{Lista niepełna}
+%           + operator dodawania, może być jedno lub dwuargumentowy\\
+%           - operator odejmowania, może być jedno lub dwuargumentowy\\
+%           * operator mnożenia, dwuargumentowy\\
+%           / operator dzielenia, dwuargumentowy\\
+%           \% operator dwuargumentowy\\
+%           \& jedno lub dwu argumentowy\\
+%           = operator przypisania, może być domyślny\\
+% $\sim$, !, =, 
+% $<$, $>$
+% +=, -=
+% *=, /=
+% \%=, \&=
+% |=, <<
+% >>, >>=
+% <<=, ==
+% !=, $<$=
+% $>$=, \&\&
+% ||, ++
+% --, ,, -$>$*, -$>$, [], \\
+% () - wywołania - ile chcemy argumentowy\\
+% poniższe operatory gdy ich nie zdefiniujemy robi to za nas kompilator
+% new, new[], delete, delete[]
+%
+% \end{frame}
+%
+% \begin{frame}[fragile]
+%   \frametitle{Operator}
+%   \framesubtitle{Na razie bez sensu}
+%   \begin{columns}
+%     \begin{column}{0.48\textwidth}
+% \begin{lstlisting}
+% //Ogolna skladnia
+% typ operator@ (argumenty)
+% {
+% // operacje 
+% }
+%
+% //wywolanie
+% operator@(args);
+% \end{lstlisting}
+%     \end{column}
+%     \begin{column}{0.48\textwidth}
+%     \begin{lstlisting}
+% #include <iostream>
+% using namespace std;
+% class foo{
+%   public:
+%   int a;
+% };
+% void operator+(foo a) //zle
+% {
+%   a.a*=-1;
+%   cout << "Wywolano operator + a=" << a.a << endl;
+% }
+% void operator*(foo& a)//tez zle
+% {
+%   a.a*=-1;
+%   cout << "Wywolano operator - a=" << a.a << endl;
+% }
+% int main(){
+%   foo f1;
+%   f1.a = 9;
+%   cout << f1.a << endl;
+%   operator*(f1); //to tez jest wywolanie
+%   +f1;
+%   *f1;
+%   cout << f1.a << endl;
+% }
+% \end{lstlisting}
+%     \end{column}
+%   \end{columns}
+% \end{frame}
+%
+% \begin{frame}[fragile]
+%   \frametitle{Operator dwuargumentowy}
+%
+% \begin{lstlisting}
+% #include <iostream>
+% using namespace std;
+% class foo{
+%   public:
+%   int a;
+% };
+% void operator+(foo& a, foo& b) //nie zwraca??
+% {
+%   a.a = a.a + b.a;
+%   cout << "Wywolano operator + a=" << a.a << endl;
+% }
+%
+% int main(){
+%   foo f1, f2;
+%   f1.a = 9;
+%   f2.a = 3;
+%   cout << f1.a << endl;
+%   f1+f2;
+%   cout << f1.a << endl;
+% }
+% \end{lstlisting}
+% Na razie trochę bez sensu, więcej przykładów ...
+% \end{frame}
+%
+% \begin{frame}[fragile]
+%   \frametitle{Operator =}
+%   \framesubtitle{Teraz lepiej}
+%   
+%   \begin{columns}
+%     \begin{column}{0.48\textwidth}
+% \begin{lstlisting}
+% class Foo {
+% public:
+% ...
+%   Foo & operator=(const Foo &prawa);
+% ...
+% }
+%
+% Foo& Foo::operator=(const Foo &p)
+% {
+%   if (this != &p)// Samo kopia?
+%   {
+%    ... // Wykonaj
+%   }
+%   return *this; //zwroc siebie
+% }
+%
+% Foo a, b;
+% ...
+% b = a;   // Jak b.operator=(a);
+% \end{lstlisting}
+%     \end{column}
+%     \begin{column}{0.48\textwidth}
+%       \begin{itemize}
+%         \item W ciele klasy
+%         \item Argument (prawa strona) jest \textit{const}
+%         \item Operator zwraca by umożliwić a=b=c
+%         \item Samo przypisanie? a=a\\
+%         \textit{if (this != \&rhs)}
+%         \item przykład ...
+%       \end{itemize}
+%     \end{column}
+%   \end{columns}
+%   
+% \end{frame}
+%
+% \begin{frame}[fragile]
+%   \frametitle{Operator +=, -=, *=}
+%   \framesubtitle{Teraz lepiej}
+%   
+%   \begin{columns}
+%     \begin{column}{0.48\textwidth}
+% \begin{lstlisting}
+% class Foo {
+% public:
+% ...
+%   Foo & operator+=(const Foo &prawa);
+% ...
+% }
+%
+% Foo& Foo::operator+=(const Foo &p)
+% {
+%   if (this != &p)// a+=a?
+%   {
+%    ... // Wykonaj
+%   }
+%   return *this; //zwroc siebie
+% }
+%
+% Foo a, b;
+% ...
+% b += a;   // Jak b.operator+=(a);
+% \end{lstlisting}
+%     \end{column}
+%     \begin{column}{0.48\textwidth}
+%       \begin{itemize}
+%         \item W ciele lub poza klasy
+%         \item Argument (prawa strona) jest \textit{const}
+%         \item Operator zwraca by umożliwić a+=b+=c ?
+%         \item przykład ...
+%       \end{itemize}
+%     \end{column}
+%   \end{columns}
+%   
+% \end{frame}
+%
+% \begin{frame}[fragile]
+%   \frametitle{Operator dwuargumentowy}
+%   \framesubtitle{W ciele}
+%
+%     \begin{lstlisting}
+% #include <iostream>
+% using namespace std;
+% class Foo{
+%   public:
+%   const Foo operator+(const Foo &prawy) const {
+%     Foo res = *this;  // Kopia res(*this);
+%     res += prawy;     // Uzyj +=
+%     return res;       // !
+%   }
+% };
+%
+% int main(){
+%   Foo a, b, c;
+%   
+%   c = a+b;
+% \end{lstlisting}
+% \end{frame}
+%
+% \begin{frame}[fragile]
+%   \frametitle{Operator dwuargumentowy}
+%   \framesubtitle{Poza ciałem - friend}
+%
+%     \begin{lstlisting}
+% #include <iostream>
+% using namespace std;
+% class foo{
+%   public:
+%   foo(int a) : a(a) {}
+%   void print() { cout << a << endl; }
+%   private:
+%   int a;
+%   friend foo operator+(const foo& a, const foo& b);
+% };
+% foo operator+(foo& a, foo& b)
+% {
+%   foo tmp = a;
+%   tmp.a += b.a;
+%   return tmp;
+% }
+%
+% int main(){
+%   foo f1(3), f2(2);
+%   f1.print();
+%   f2.print();
+%   foo f3 = f1+f2;
+%   f3.print();
+% }
+% \end{lstlisting}
+% \end{frame}
+
+\end{document}
