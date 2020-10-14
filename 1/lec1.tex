@@ -404,6 +404,7 @@ pi = 3; //compiler error
     \begin{column}{0.48\textwidth}
       \begin{itemize}
         \item \#define to zło
+        \item const może się pojawiać w różnych kontekstach, może określać metodę lub referencję będącą argumentem, postaramy się pokazać te przypadki wraz z naszymi postępami
         \item const jest sprawdzane w czasie kompilacji
       \end{itemize}
     \end{column}
@@ -500,59 +501,59 @@ int main(){
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Konstruktor i destruktor}
-  \begin{columns}
-    \begin{column}{0.48\textwidth}
-\vspace{-0.2cm}
-\begin{lstlisting}
-#include <iostream>
-#include <stdlib.h>
-
-using namespace std;
-
-class collection{
-public:
-  collection(){size=0; tab=NULL;}
-  collection(int s) : size(s) {allocate();}
-  collection(collection& c){
-    size=getSize();
-    //tab = ????
-    }
-  ~collection(){
-    cout << "The cleaning service!" << endl;
-    delete []tab;
-  }
-  void setSize(int a){ size=a; }
-  int getSize(){ return size; }
-  void allocate();
-  int& rTab(int i)
-  { return tab[i];}
-private:
-  int size;
-  int * tab;
-};
-\end{lstlisting}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-\begin{lstlisting}
-void collection::allocate()
-{
-  tab = new int[size];
-}
-
-int main(){
-  ...
-}
-\end{lstlisting}
-      \begin{itemize}
-        \item Metody specjalne, tworzone domyslnie
-        \item Definicja w lub poza ciałem
-        \item Destruktor wywoływany przed zwolnieniem zasobów
-      \end{itemize}
-    \end{column}
-  \end{columns}
-\end{frame}
+% \begin{frame}[fragile]
+%   \frametitle{Konstruktor i destruktor}
+%   \begin{columns}
+%     \begin{column}{0.48\textwidth}
+% \vspace{-0.2cm}
+% \begin{lstlisting}
+% #include <iostream>
+% #include <stdlib.h>
+%
+% using namespace std;
+%
+% class collection{
+% public:
+%   collection(){size=0; tab=NULL;}
+%   collection(int s) : size(s) {allocate();}
+%   collection(collection& c){
+%     size=getSize();
+%     //tab = ????
+%     }
+%   ~collection(){
+%     cout << "The cleaning service!" << endl;
+%     delete []tab;
+%   }
+%   void setSize(int a){ size=a; }
+%   int getSize(){ return size; }
+%   void allocate();
+%   int& rTab(int i)
+%   { return tab[i];}
+% private:
+%   int size;
+%   int * tab;
+% };
+% \end{lstlisting}
+%     \end{column}
+%     \begin{column}{0.48\textwidth}
+% \begin{lstlisting}
+% void collection::allocate()
+% {
+%   tab = new int[size];
+% }
+%
+% int main(){
+%   ...
+% }
+% \end{lstlisting}
+%       \begin{itemize}
+%         \item Metody specjalne, tworzone domyslnie
+%         \item Definicja w lub poza ciałem
+%         \item Destruktor wywoływany przed zwolnieniem zasobów
+%       \end{itemize}
+%     \end{column}
+%   \end{columns}
+% \end{frame}
 
 
 
