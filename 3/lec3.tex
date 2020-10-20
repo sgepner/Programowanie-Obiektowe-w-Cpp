@@ -1,0 +1,524 @@
+%\documentclass[draft,10pt]{beamer}
+\documentclass[10pt]{beamer}
+
+\usepackage[english,polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+
+\usepackage{define}
+
+\eventtitle{Programowanie obiektowe w języku C++}
+\title{Programowanie obiektowe w języku C++}
+\author[shortname]{Stanis{\l}aw Gepner}
+\institute[shortinst]{sgepner@meil.pw.edu.pl}
+\date{}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{navigation symbols}[]
+
+\begin{document}
+
+\frame{
+    \titlepage
+}
+
+\section{Wspomnienia}
+
+\begin{frame}
+  \frametitle{Co już wiemy}
+  
+  \centering
+  \begin{enumerate}
+    \item Klasy i struktury
+    \item modyfikatory \textit{public} i \textit{protected}
+    \item Metody - funkcje klasy
+    \item Konstruktory i destruktor klasy
+  \end{enumerate}
+\end{frame}
+
+\section{static}
+
+\begin{frame}[fragile]
+  \frametitle{Zmienne statyczne}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\vspace{-0.2cm}
+\begin{lstlisting}
+class foobar{
+  public:
+    static int a;
+    int b = 5; // -std=c++11
+};
+int main(){
+  foobar f1, f2;
+  ...
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Nowe słówko \textit{static}
+        \item Współdzielone przez wszystkie instancje klasy
+        \item Inicjalizacja poza ciałem bez słówka \textit{static}
+        \item Można użyć bez instancji klasy!
+        \item Można zmienić wartość
+        \item Przykład:
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Zmienne statyczne const ...}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\vspace{-0.2cm}
+\begin{lstlisting}
+class foobar{
+  public:
+    static const int a;
+    int b = 5; // -std=c++11
+};
+int main(){
+  foobar f1, f2;
+  ...
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item \textit{static const}
+        \item Współdzielone przez wszystkie instancje klasy
+        \item Inicjalizacja w ciele
+        \item Można użyć bez instancji klasy!
+        \item Nie można zmienić wartości
+        \item Przykład:
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Funkcje statyczne}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\vspace{-0.2cm}
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+class foobar{
+  public:
+    static int a;
+    int b;
+    
+    static void static_do(int new_d)
+    {
+      cout << "a=" << a << endl;
+      a = new_d;
+      //b = a; // nie wolno
+    }
+};
+int foobar::a = 9;
+int main(){
+  foobar f1, f2, f3;
+  cout << f1.a << endl;
+  foobar::static_do(9);
+  cout << f3.a << endl;
+}
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item \textit{static typ nazwa()\{\}}
+        \item Współdzielone przez wszystkie instancje klasy
+        \item Można użyć bez instancji klasy!
+        \item Może działać tylko na zmiennych, które są \textit{static}
+        \item Przykład:
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Operatory}
+
+\begin{frame}[fragile]
+  \frametitle{Operatory}
+      \begin{itemize}
+        \item Operatorem może być symbol, np.: +, -, *, /
+        \item albo \textit{new new[] delete []delete}
+        \item albo teź konwersja typów (przemilczeć)
+        \item W C++ użycie operatora jest związane z wywołaniem metody
+        \item C++ pozwala na definiowanie własnych operatorów
+        \item ... ale nie dla typów wbudowanych
+        \item Definicje mogą być w ciele, albo poza
+        \item Operatory mogą być jedno (+a) i dwu argumentowe (a+b)
+        \item W zasadzie metoda może być dowolna (co nie znaczy, że powinna)
+        \item Operator powinien wykonywać przewidywalną operację np: \\
+        c=a+b nie powinien zmieniać argumentów a, b (chociaz własciwie to czemu nie?)
+        \item Jest tego dużo
+      \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Operatory}
+  \framesubtitle{Lista niepełna}
+          + operator dodawania, może być jedno lub dwuargumentowy\\
+          - operator odejmowania, może być jedno lub dwuargumentowy\\
+          * operator mnożenia, dwuargumentowy\\
+          / operator dzielenia, dwuargumentowy\\
+          \% operator dwuargumentowy\\
+          \& jedno lub dwu argumentowy\\
+          = operator przypisania, może być domyślny\\
+$\sim$, !, =, 
+$<$, $>$
++=, -=
+*=, /=
+\%=, \&=
+|=, <<
+>>, >>=
+<<=, ==
+!=, $<$=
+$>$=, \&\&
+||, ++
+--, ,, -$>$*, -$>$, [], \\
+() - wywołania - ile chcemy argumentowy\\
+poniższe operatory gdy ich nie zdefiniujemy robi to za nas kompilator
+new, new[], delete, delete[]
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Operator}
+  \framesubtitle{Na razie bez sensu}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+//Ogolna skladnia
+typ operator@ (argumenty)
+{
+// operacje 
+}
+
+//wywolanie
+operator@(args);
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+    \begin{lstlisting}
+#include <iostream>
+using namespace std;
+class foo{
+  public:
+  int a;
+};
+void operator+(foo a) //zle
+{
+  a.a*=-1;
+  cout << "Wywolano operator + a=" << a.a << endl;
+}
+void operator*(foo& a)//tez zle
+{
+  a.a*=-1;
+  cout << "Wywolano operator - a=" << a.a << endl;
+}
+int main(){
+  foo f1;
+  f1.a = 9;
+  cout << f1.a << endl;
+  operator*(f1); //to tez jest wywolanie
+  +f1;
+  *f1;
+  cout << f1.a << endl;
+}
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Operator dwuargumentowy}
+  \framesubtitle{Wciąż bez sensu}
+
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+class foo{
+  public:
+  int a;
+};
+void operator+(foo& a, foo& b) //nie zwraca??
+{
+  a.a = a.a + b.a;
+  cout << "Wywolano operator + a=" << a.a << endl;
+}
+
+int main(){
+  foo f1, f2;
+  f1.a = 9;
+  f2.a = 3;
+  cout << f1.a << endl;
+  f1+f2;
+  cout << f1.a << endl;
+}
+\end{lstlisting}
+Na razie trochę bez sensu, więcej przykładów ...
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Operator =}
+  \framesubtitle{Teraz lepiej}
+  
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+class Foo {
+public:
+...
+  Foo & operator=(const Foo &prawa);
+...
+}
+
+Foo& Foo::operator=(const Foo &p)
+{
+  if (this != &p)// Samo kopia?
+  {
+   ... // Wykonaj
+  }
+  return *this; //zwroc siebie
+}
+
+Foo a, b;
+...
+b = a;   // Jak b.operator=(a);
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item Musi być w ciele klasy (?)
+        \item Argument (prawa strona) jest \textit{const}
+        \item Operator zwraca by umożliwić a=b=c
+        \item Samo przypisanie? a=a\\
+        \textit{if (this != \&rhs)}
+        \item przykład ...
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Operator +=, -=, *=}
+  \framesubtitle{Teraz lepiej}
+  
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+\begin{lstlisting}
+class Foo {
+public:
+...
+  Foo & operator+=(const Foo &prawa);
+...
+}
+
+Foo& Foo::operator+=(const Foo &p)
+{
+  if (this != &p)// a+=a?
+  {
+   ... // Wykonaj
+  }
+  return *this; //zwroc siebie
+}
+
+Foo a, b;
+...
+b += a;   // Jak b.operator+=(a);
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{itemize}
+        \item W ciele lub poza klasy
+        \item Argument (prawa strona) jest \textit{const}
+        \item Operator zwraca by umożliwić a+=b+=c ?
+        \item przykład ...
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Operator dwuargumentowy}
+  \framesubtitle{W ciele - niebezpiecznie}
+
+    \begin{lstlisting}
+#include <iostream>
+using namespace std;
+class Foo{
+  public:
+  Foo operator+(const Foo &prawy) const {
+    Foo res = *this;  // Kopia res(*this);
+    res += prawy;     // Uzyj +=
+    return res;       // !
+  }
+};
+
+int main(){
+  Foo a, b, c;
+  
+  c = a+b;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Operator dwuargumentowy}
+  \framesubtitle{Poza ciałem - \textit{friend}}
+
+    \begin{lstlisting}
+#include <iostream>
+using namespace std;
+class foo{
+  public:
+  foo(int a) : a(a) {}
+  void print() { cout << a << endl; }
+  private:
+  int a;
+  friend foo operator+(const foo& a, const foo& b);
+};
+foo operator+(foo& a, foo& b)
+{
+  foo tmp = a;
+  tmp.a += b.a;
+  return tmp;
+}
+
+int main(){
+  foo f1(3), f2(2);
+  f1.print();
+  f2.print();
+  foo f3 = f1+f2;
+  f3.print();
+}
+\end{lstlisting}
+\end{frame}
+
+\subsection{friend}
+
+\begin{frame}
+  \frametitle{friend}
+  
+  
+  \begin{itemize}
+    \item \textit{friend}
+    \item Ma dostęp do atrybutów \textit{private} i \textit{protected}
+    \item Pozwala na pelniejszą hermetyzację
+    \item To co musiało by być \textit{public} może zostać udostępnione tylko pewnym klasom
+    \item Zwiekszona zależność pomiędzy klasami
+    \item Przyjaźń jest jednostronna, deklarowana przez klasę dopuszczającą
+    \item Nieistotne gdzie w ciele
+    \item Można do wielu
+    \item Klasy jak i funkcje
+    \item Nie jest przechodnia
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{<<}
+  
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+class foo{
+  public:
+  foo(int a, int b) : a(a), b(b) {}
+  private:
+  int a;
+  int b;
+  friend std::ostream& operator<<(std::ostream& os, const foo& f);
+};
+
+std::ostream& operator<<(std::ostream& os, const foo& f)
+{
+    os << "[" << f.a << ", " << f.b << "]";
+    return os;
+}
+
+int main()
+{
+  foo f1(3,4), f2(5,6);
+  std::cout << f1 << std::endl;
+  std::cout << f2 << std::endl;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Obiekt funkcyjny ()}
+  \framesubtitle{funktor}
+  
+\begin{itemize}
+  \item Obiekt, który mozna wywołać jak funkcję
+  \item Konieczne zdefiniowanie operatora \textit{()}
+  \item Zaletą nad funkcją jest to, że funktor jest pełnoprawnym obiektem
+  \item ... może więc mieć określony stan
+  \item ... konstruktor, destruktor, itd.
+\end{itemize}
+
+\begin{lstlisting}
+#include <iostream>
+ 
+class foo {
+  public:
+    foo (int x) : _x( x ) {}
+    int operator() (int y) { return _x + y; }
+    int operator() (int a, int b, int c) {return _x + a + b - c;}
+  private:
+    int _x;
+};
+ 
+int main(){
+  foo f1(5);
+  foo f2(4);
+  std::cout << f1( 6 ) << endl;
+  std::cout << f2( 6, 7, 2 ) << endl;
+  return 0;
+}
+\end{lstlisting}
+
+\end{frame}
+
+\section{Dziedziczenie - początek}
+
+\begin{frame}[fragile]
+  \frametitle{Dziedziczenie}
+  \begin{itemize}
+    \item Gdy kolejna klasa rozszerza możliwości już istniejącej
+    \item Pozwala tworzyć nowe w oparciu o stare
+    \item Współdzielenie kodu
+    \item Interpretowanie obiektu tak jakby był obiektem z ktorego dziedziczy
+    \item Hierarchia klas
+  \end{itemize}
+  
+  \begin{lstlisting}
+class nazwa :[operator_widocznosci] nazwa_klasy_bazowej //na razie
+{
+  //definicja_klasy
+};
+\end{lstlisting}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
