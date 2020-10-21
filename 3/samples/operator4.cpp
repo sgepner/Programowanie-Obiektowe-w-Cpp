@@ -13,6 +13,7 @@ class foo{
      a+=f.a;
     return *this;
   }
+  
   private:
   int a;
   

@@ -1,20 +1,26 @@
 #include <iostream>
 using namespace std;
+
 class foo{
   public:
-  int a;
+  int m_a;
 };
-void operator+(foo& a, foo& b) //
+
+void operator+(foo& lewy, foo& prawy)
 {
-  a.a = a.a + b.a;
-  cout << "Wywołano operator + a=" << a.a << endl;
+  lewy.m_a += prawy.m_a;
+  // b.a = 0; // mozemy popsuc
+  cout << "Wywołano operator + a=" << lewy.m_a << endl;
 }
 
 int main(){
   foo f1, f2;
-  f1.a = 9;
-  f2.a = 3;
-  cout << f1.a << endl;
+  f1.m_a = 9;
+  f2.m_a = 3;
+  
+  cout << f1.m_a << " " << f2.m_a << endl;
+  
+  //foo f3 = f1+f2;
   f1+f2;
-  cout << f1.a << endl;
+  cout << f1.m_a << " " << f2.m_a << endl;
 }

@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+
 class foobar{
   public:
     static int a;
@@ -9,10 +10,12 @@ class foobar{
     {
       cout << "a=" << a << endl;
       a = new_d;
-      b = a;
+      b = a; // tu nie zadziala
     }
 };
+
 int foobar::a = 20;
+
 int main(){
   foobar f1, f2, f3;
   cout << f1.a << endl;

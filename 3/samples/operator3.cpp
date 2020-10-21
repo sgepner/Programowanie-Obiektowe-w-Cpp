@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+
 class foo{
   public:
   foo(){cout << "a" <<endl;}
