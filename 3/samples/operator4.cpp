@@ -15,10 +15,23 @@ class foo{
   }
   private:
   int a;
+  
+  friend foo& operator-=(foo& l, const foo& r);
 };
+
+foo& operator-=(foo& l, const foo& r)
+{
+  cout << "-= " << l.a << " " << r.a << endl;
+  // Check for self assignment
+  l.a -= r.a;
+  return l;
+}
 
 int main(){
   foo f1(3), f2(2);
+  f1 -= f2;
+  f1.print();
+  f2.print();
   foo f3=f1;  
   f1.print();
   f2.print();

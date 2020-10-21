@@ -4,30 +4,17 @@ class foo{
   public:
   int a;
 };
-void operator+(foo a) //
+void operator+(foo& a) //to zmienia tylko kopie!
 {
-  a.a*=-1;
-  cout << "Wywołano operator + a=" << a.a << endl;
+    a.a+=1;
+    cout << "Wywołano operator + a=" << a.a << " " << &a << endl;
 }
-void operator*(foo& a)
+
+int main()
 {
-  a.a*=-1;
-  cout << "Wywołano operator * a=" << a.a << endl;
-}
-int main(){
   foo f1;
-  f1.a = 9;
-  cout << f1.a << endl;
-  operator+(f1);
-  cout << f1.a << endl;
-  operator*(f1);
-  cout << f1.a << endl;
-  
-  cout << " ---- " << endl;
-  
-  cout << f1.a << endl;
+  f1.a = 5;
   +f1;
-  cout << f1.a << endl;
-  *f1;
-  cout << f1.a << endl;
+  +f1;
+  +f1;
 }
