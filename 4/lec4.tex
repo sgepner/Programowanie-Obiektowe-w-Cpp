@@ -1,0 +1,566 @@
+%\documentclass[draft,10pt]{beamer}
+\documentclass[10pt]{beamer}
+
+\usepackage[english,polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+
+\usepackage{define}
+\usepackage{tikz-uml}
+
+\eventtitle{Programowanie obiektowe w języku C++}
+\title{Programowanie obiektowe w języku C++}
+\author[shortname]{Stanis{\l}aw Gepner}
+\institute[shortinst]{sgepner@meil.pw.edu.pl}
+\date{}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{navigation symbols}[]
+
+\begin{document}
+
+\frame{
+    \titlepage
+}
+
+\section{Dziedziczenie - początek}
+
+\begin{frame}
+  \frametitle{Dziedziczenie}
+  \framesubtitle{Wstęp}
+
+	\centering
+	Zacznijmy od przykładu  
+  
+  \begin{itemize}
+    \item Przykład rolniczy
+    \item Każde zwierzątko wydaje dźwięk
+    \item Każde się tak samo porusza
+    \item Musimy traktować oddzielnie - kłopotliwe
+    \item Nie możemy na problem spojrzeć abstrakcyjnie
+		\item Mechanizm, który pozwoli nam 'połączyć' zwierzątka
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dziedziczenie}
+  \framesubtitle{Wstęp}
+  	\begin{itemize}
+	    \item Kolejne klasy rozszerzają możliwości już istniejących
+	    \item Pozwala tworzyć nowe klasy w oparciu o już istniejące
+	    \begin{itemize}
+	    	\item Współdzielenie kodu (nasza metoda chodz())
+	    	\item Łatwiejsze zarządzanie
+	    \end{itemize}
+	    \item Umożliwia hierarchię klas, np.: kształty $\varsupsetneq$ prostokąty $\varsupsetneq$ kwadraty
+	    \item Klasę po której dziedziczymy nazywamy \textbf{bazową}
+	    \item Klasę dziedziczącą nazywamy \textbf{pochodną}
+	    \item Obiekt klasy pochodnej, jest jednocześnie obiektem klasy bazowej, ale nie odwrotnie
+	    \item albo obiekt klasy bazowej jest subobiektem klasy pochodnej (Pochodna ma w sobie bazowy) 
+  \end{itemize}
+\end{frame}
+
+\section{Składnia}
+
+\begin{frame}[fragile]
+  \frametitle{Składnia}
+  \begin{center}
+\begin{lstlisting}
+class nazwa :[operator_widocznosci] nazwa_klasy_bazowej //na razie
+{
+  //definicja_klasy
+};
+\end{lstlisting}
+  Operator widoczności może być: \textit{public, \textbf{protected}, private}\\ \vspace{0.5cm}
+
+  \textbf{B} dziedziczy po \textbf{A}  
+\begin{lstlisting}
+class A {};
+class B :public A {}; //operator public
+\end{lstlisting}
+  \centering
+  \begin{tikzpicture}
+    \umlsimpleclass{A}
+    \umlsimpleclass[x=4, y=0]{B}
+    \umlinherit{B}{A}
+  \end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Składnia}
+  \framesubtitle{\textbf{\textit{protected}}}
+  \centering
+  \vspace{-0.5cm}
+  Operator widoczności \textit{\textbf{protected}} powoduje, że atrybuty klasy bazowej,
+  mogą być swobodnie używane w klasie dziedziczącej ale poza klasą nią
+  i klasą bazową nie są widoczne (jak \textit{private}).
+  \newline
+\begin{lstlisting}
+class A{
+  public:
+    int a;
+  protected:
+    int b;
+  private:
+    int c;
+};
+class B: public A{
+  public:
+  void fun(){a=8; b=4; c=5;} // c jest private!
+};
+int main(){
+  B b;
+  b.fun();
+  cout << b.a << " " << b.b << " " << b.c << endl;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Składnia}
+  \framesubtitle{Operator widoczności}
+  \begin{itemize}
+    \item \textit{public} $\rightarrow$ bez zmian
+    \begin{itemize}
+      \item \textit{public} $\rightarrow$ \textit{public}
+      \item \textit{protected} $\rightarrow$ \textit{protected}
+      \item \textit{private} $\rightarrow$ brak dostępu
+    \end{itemize}
+    \item \textit{protected} $\rightarrow$ \textit{public} zmienia się w \textit{protected}
+    \begin{itemize}
+      \item \textit{public} $\rightarrow$ \textit{\textbf{protected}}
+      \item \textit{protected} $\rightarrow$ \textit{protected}
+      \item \textit{private} $\rightarrow$ brak dostępu
+    \end{itemize}
+    \item \textit{private} $\rightarrow$ wszystko zmienia się w \textit{private}
+    \begin{itemize}
+      \item \textit{public} $\rightarrow$ \textit{\textbf{private}}
+      \item \textit{protected} $\rightarrow$ \textit{\textbf{private}}
+      \item \textit{private} $\rightarrow$brak dostępu
+    \end{itemize}
+    \item brak operatora $\rightarrow$ domyślnie \textit{private}
+  \end{itemize}
+\end{frame}
+
+\section{Pewne konsekwencje}
+
+\begin{frame}[fragile]
+  \frametitle{sizeof}
+  \framesubtitle{Tablice}
+  \begin{columns}
+    \begin{column}{0.49\textwidth}
+\begin{lstlisting}
+class A{
+  public:
+  char tabA[1024];
+  int a;
+};
+class B : public A{
+  public:
+  char tabB[1024];
+  int b;
+};
+...
+A a;
+B b;
+cout<<sizeof(a)<<" "<<sizeof(b)<<endl;
+A tab[2];
+tab[0] = B();
+tab[1] = A(); //zadziala, ale ...
+...
+tab[0].a = 5;
+tab[0].b = 5; //?
+tab[1].a = 6;
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+    \begin{itemize}
+  \item Obiekt klasy pochodnej zawiera w sobie subobiekt klasy bazowej
+  \item Jaka jest odległość między tab[0] i tab[1] ?
+  \item Czy zmieści sie tam obiekt klasy B?
+  \item Należy uzywać tablicy wskaźników!
+\end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Dostęp do atrybutów}
+  \begin{columns}
+    \begin{column}{0.49\textwidth}
+      \begin{lstlisting}
+class Bydle{
+  public:
+  void jedz();
+};
+class kura : public bydle{
+  public:
+  void gdacz();
+};
+class krowa : public bydle{
+  public:
+  void mucz();
+};
+...
+kura k; //instancja
+k.jedz()
+k.gdacz()
+
+krowa * pk = new krowa();
+pk->jedz(); // pointer
+pk->mucz();
+
+bydle* pb = pk;//rzutowanie
+pk->jedz();
+pb = &k;
+k->jedz();
+((bydle)k).jedz();
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+    \begin{itemize}
+  \item Krowa muczy, kura gdzcze
+  \item Kura i krowa mogą jeść
+  \item przykład ...
+\end{itemize}
+\begin{lstlisting}
+bydle* tab[2];
+tab[0] = new kura();
+tab[1] = new krowa();
+tab[0]->jedz();
+tab[1]->jedz();
+...
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Wielodziedziczenie}
+\begin{frame}[fragile]
+  \frametitle{Wielodziedziczenie}
+  \framesubtitle{Diament}
+  \begin{columns}
+    \begin{column}{0.49\textwidth}
+    \begin{tikzpicture}
+    \umlsimpleclass{A}
+    \umlsimpleclass[x=-1, y=-2]{B}
+    \umlsimpleclass[x=1,y=-2]{C}
+    \umlsimpleclass[y=-4]{D}
+    \umlinherit{B}{A}
+    \umlinherit{C}{A}
+    \umlinherit{D}{B}
+    \umlinherit{D}{C}
+    \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+    \begin{itemize}
+      \item Język C++ umożliwia wielodziedziczenie
+      \item Może to powodować pewne komplikacje - diament
+      \item Jak D zawiera A?
+      \item Jaki jest rozmiar D?
+      \item Jak jednoznacznie dostać się do atrybutów A
+      \item Dziedziczenie wirtualne
+    \end{itemize}
+\begin{lstlisting}
+class A {
+    char buff[1024];
+public:
+    void show() {}
+};
+class B: public A {};
+class C: public A {};
+class D: public A, public B {};
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Wielodziedziczenie}
+  \framesubtitle{Dziedziczenie wirtualne}
+  \begin{columns}
+    \begin{column}{0.49\textwidth}
+    \begin{tikzpicture}
+    \umlsimpleclass{A}
+    \umlsimpleclass[x=-1, y=-2]{B}
+    \umlsimpleclass[x=1,y=-2]{C}
+    \umlsimpleclass[y=-4]{D}
+    \umlinherit{B}{A}
+    \umlinherit{C}{A}
+    \umlinherit{D}{B}
+    \umlinherit{D}{C}
+    \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+    \begin{lstlisting}
+class A {
+    char buff[1024];
+public:
+    void show() {}
+};
+class B: public virtual A {};
+class C: public virtual A {};
+class D: public A, public B {};
+\end{lstlisting}
+    \begin{itemize}
+      \item D w jednoznaczny sposób zawiera A
+      \item D ma odpowiedni rozmiar
+      \item Odwołania do atrybutów A są jednoznaczne
+    \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Przykrywanie metod}
+
+\begin{frame}[fragile]
+  \frametitle{Przykrywanie metod}
+  \begin{columns}
+    \begin{column}{0.49\textwidth}
+      \begin{lstlisting}
+class Bydle{
+  public:
+  void jedz();
+  void dzwiek(){/*?*/}
+};
+class kura : public bydle{
+  public:
+  void dzwiek(){cout<<"KoKoKo"<<endl;}
+//  void gdacz();
+};
+class krowa : public bydle{
+  public:
+  void dzwiek(){cout<<"Muuu"<<endl;}
+//  void mucz();
+};
+...
+kura k; k.dzwiek()
+krowa a; a.dzwiek;
+bydle *p = new krowa();
+p->dzwiek(); //??
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+\begin{lstlisting}
+bydle* tab[2];
+tab[0] = new kura();
+tab[1] = new krowa();
+tab[0]->dzwiek();
+tab[1]->dzwiek();
+...
+\end{lstlisting}
+    \begin{itemize}
+  \item Zaczynamy unifikować nasze podejście
+  \item Nie interesuje nas czym dokładnie jest bydle
+  \item Co jest wywołane, kiedy i dlaczego?
+  \item Przykład
+\end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Funkcje wirtualne}
+  \begin{columns}
+    \begin{column}{0.49\textwidth}
+      \begin{lstlisting}
+class Bydle{
+  public:
+  void jedz();
+  virtual void dzwiek(){/*?*/}
+};
+class kura : public bydle{
+  public:
+  virtual void dzwiek()
+  {cout<<"KoKoKo"<<endl;}
+//  void gdacz();
+};
+class krowa : public bydle{
+  public:
+  virtual void dzwiek()
+  {cout<<"Muuu"<<endl;}
+//  void mucz();
+};
+...
+kura k; k.dzwiek()
+krowa a; a.dzwiek;
+bydle *p = new krowa();
+p->dzwiek(); //??
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+\begin{lstlisting}
+bydle* tab[2];
+tab[0] = new kura();
+tab[1] = new krowa();
+tab[0]->dzwiek();
+tab[1]->dzwiek();
+...
+\end{lstlisting}
+    \begin{itemize}
+  \item Pozwala na wywołanie prawidłowej metody
+  \item tzn. metody klasy pochodnej z poziomu bazowej
+  \item Funkcja nie jest dowiązana w czasie kompilacji, a w momencie wykonania programu - \textit{late linking}
+  \item Koszt pamięciowy i czasowy ... nie jeżeli dostajemy się rzutując na obiekt klasy pochodnej
+\end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Konstrukto Destruktor}
+  \framesubtitle{Kolejność wywoływania}
+  \begin{columns}
+    \begin{column}{0.49\textwidth}
+      \begin{lstlisting}
+class A{
+  public:
+  A(){cout<<"A"<<endl;}
+  A(int a){...}
+  virtual ~A(){}
+};
+class B : public A{
+  public:
+  B() : A() {cout<<"B"<<endl;}
+  B(int a) : A(a) {...}
+  virtual ~B(){}
+};
+...
+A a, a2(9);
+B b, b1(2);
+...
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+    \begin{itemize}
+  \item Subobiekt klasy bazowej musi istnieć zanim powstanie obiekt dziedziczący
+  \item Konstruktor obiektu klasy bazowej musi zostać wywołany w liście inicjalizacyjnej
+  \item Destruktory powinny być wirtualne, by zapewnić poprawne zwalnianie pamięci
+  \item Częste pytanie na rozmowach o pracę: Po co destruktor jest wirtualny?
+  \item Konstruktor wywoływany jest od bazowej w dół
+  \item Destruktor od pochodnej w górę (chyba, że nie jest wirtualny)
+\end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Metody i klasy abstrakcyjne}
+
+\begin{frame}[fragile]
+  \frametitle{Metoda abstrakcyjna}
+  \begin{columns}
+    \begin{column}{0.49\textwidth}
+      \begin{lstlisting}
+class A{
+  public:
+  virtual void fun() = 0;
+};
+class B : public A{
+  public:
+  virtual void fun(){}
+};
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+    \begin{itemize}
+  \item Metoda nie musi posiadać ciała w klasie bazowej
+  \item ...bo możemy nie wiedzieć jak ją zrealizować
+  \item ...stosunek ovwodu do pola w kształcie?
+  \item deklaracja = 0;
+  \item Można wywołać taką metodę w klasie bazowej!
+  \item Klasa posiadająca przynajmniej jedna metodę \textit{abstrakcyjną} staje się klasą \textit{abstrakcyjną} i nie można stworzyć już obiektu tej klasy!
+  \item Trzeba dziedziczyć i implementować wszystkie metody abstrakcyjne
+\end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Uniemożliwienie dziedziczenia}
+
+\begin{frame}[fragile]
+  \frametitle{Uniemożliwienie dziedziczenia}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+    \begin{itemize}
+  \item Przed C++11 kłopotliwe
+  \item Prywatny konstruktor
+  \item Dodać do klasy statyczną metodę tworzącą instancję
+  \item Nieczytelne
+  \item Dla każdego konstruktora musi byc metoda
+  \item Kompilator zgłosi błąd dopiero przy instantacji klasy
+\end{itemize}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \begin{lstlisting}
+class A{
+private:
+  A();
+public:
+  static A* zrobA() {return new A();}
+};
+class B: public A{};
+int main(){
+  // B b; //konstruktor prywatny
+  A* pa = A::zrobA();
+  delete pa;
+  return 0;
+}
+
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Uniemożliwienie dziedziczenia}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+    \begin{itemize}
+  \item C++11 wprowadza słówko \textit{final}
+  \item jak w Java?
+\end{itemize}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \begin{lstlisting}
+class A final{
+public:
+  A();
+};
+class B: public A{};
+int main(){
+  
+}
+\end{lstlisting}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Lepsza farma}
+
+\begin{frame}
+  \frametitle{Lepsza farma}
+  \framesubtitle{Przykład}
+
+	\centering
+	Zakończymy przykładem\\
+	
+	\vspace{1cm}
+\begin{tikzpicture}
+  \umlsimpleclass{bydle}
+  \umlsimpleclass[x=-4, y=-2]{krowa}
+  \umlsimpleclass[x=-2, y=-2]{kon}
+  \umlsimpleclass[x=0, y=-2]{osiol}
+  \umlsimpleclass[x=2, y=-2]{kura}
+  \umlsimpleclass[x=-1, y=-4]{mul}
+  \umlinherit{krowa}{bydle}
+  \umlinherit{kon}{bydle}
+  \umlinherit{osiol}{bydle}
+  \umlinherit{kura}{bydle}
+  \umlinherit{mul}{kon}
+  \umlinherit{mul}{osiol}
+\end{tikzpicture}
+\end{frame}
+
+\end{document}
