@@ -1,0 +1,539 @@
+%\documentclass[draft,10pt]{beamer}
+\documentclass[10pt]{beamer}
+
+\usepackage[english,polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+
+\usepackage{define}
+\usepackage{tikz-uml}
+
+\eventtitle{Programowanie obiektowe w języku C++}
+\title{Programowanie obiektowe w języku C++}
+\author[shortname]{Stanis{\l}aw Gepner}
+\institute[shortinst]{sgepner@meil.pw.edu.pl}
+\date{}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{navigation symbols}[]
+
+\begin{document}
+
+\frame{
+    \titlepage
+}
+
+\section{Polimorfizm - dokończenie}
+
+\begin{frame}
+  \frametitle{Polimorfizm - dokończenie}
+  \framesubtitle{Lepsza farma}
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{tikzpicture}
+        \umlsimpleclass{bydle}
+        \umlsimpleclass[x=-2, y=-2]{krowa}
+        \umlsimpleclass[x=-0.3, y=-2]{kon}
+        \umlsimpleclass[x=1, y=-3]{osiol}
+        \umlsimpleclass[x=1.8, y=-2]{kura}
+        \umlsimpleclass[x=-1, y=-4]{mul}
+        \umlinherit{krowa}{bydle}
+        \umlinherit{kon}{bydle}
+        \umlinherit{osiol}{bydle}
+        \umlinherit{kura}{bydle}
+        \umlinherit{mul}{kon}
+        \umlinherit{mul}{osiol}
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      \begin{itemize}
+        \item Polimorfizm - czyli wielopostaciowość
+        \item Zdolność kodu do różnego zachowania w trakcie wykonania
+        \item Wskaźnik polimorficzny \textit{bydle *p = ...}
+        \item ... tzn. taki, który możemy róznie interpretować
+        \item To funkcje składowe klasy mogą być polimorficzne,
+        \item a nie obiekt klasy
+        \item Określenie, która funkcja jest wykonana dla danego obiektu jest przesunięte do czasu wykonania
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Szablony - template}
+
+\begin{frame}[fragile]
+  \frametitle{Szablony}
+  \framesubtitle{Jak pisać mniej a dostać więcej}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+    \begin{itemize}
+      \item Szablon, \textit{templejt*}, generyk ...
+      \item Umożliwia tworzenie kodu niezależnego od typów, większa elastyczność
+      \item Pozwala na nieduplikowanie kodu
+      \item Wykonanie w czasie kompilacji, jak makra preprocesora C
+      \item Szablony funkcji, klas, metod
+      \item Szablon może być oparty o typ (klasę) lub wartość całkowitą
+      \item Metaprogramowanie: w oparciu o mechanizm szablonu. Tak język szablonów jest kompletny w sensie Turinga.
+    \end{itemize}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+\begin{lstlisting}
+template <class T> 
+typ_funkcji fun(argumenty)
+{
+  Cialo funkcji
+}
+
+template <class T> 
+class List
+{
+    ...
+};
+\end{lstlisting}
+{\tiny *takiego słowa nie ma ...}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Funkcje}
+
+\begin{frame}[fragile]
+  \frametitle{Bez szablonów funkcji}
+  \framesubtitle{Po co? przykład z przeładowaniem}
+
+Tworzymy funkcję \textit{square()} liczącej kwadrat zmiennej każdego typu\\
+\vspace{0.1cm}
+\begin{lstlisting}
+int square(int x){  return x*x;}
+short int square(short int x){  return x*x;}
+unsigned short int square(unsigned short int x){  return x*x;}
+long square(long x){  return x*x;}
+unsigned long square(unsigned long x){  return x*x;}
+long long square(long long x){  return x*x;}
+unsigned long long square(unsigned long long x){  return x*x;}
+float square(float x){  return x*x;}
+double square(double x){  return x*x;}
+// i tak dalej, i jeszcze dla naszych typow ...
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Bez szablonów funkcji}
+  \framesubtitle{Po co? przykład z przeładowaniem}
+
+A potem dodamy jeszcze dla wszystkich klas jakie tworzymy...
+\vspace{0.1cm}
+\begin{lstlisting}
+class complex{//liczba zespolona na int
+  public:
+  complex(int r, int i) : real(r), imag(i) {}
+  const int& c_real(){return real;}
+  const int& c_imag(){return imag;}
+  private:
+  int real;
+  int imag;
+};
+
+complex square_elements(complex& a){
+  return complex(a.c_real()*a.c_real(),
+                a.c_imag()*a.c_imag());
+}
+\end{lstlisting}
+A może by tak napisać program do pisania programu?!
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Szablon funkcji}
+  \framesubtitle{Składnia}
+Zamiast pisać dużo kodu możemy napisać 'ogólną receptę':\\
+Tak to język w języku ...
+\vspace{0.1cm}
+\begin{lstlisting}
+template <class T> // l typename
+typ_funkcji fun(argumenty)
+{
+  Cialo funkcji
+}
+\end{lstlisting}  
+W naszym przypadku:\\
+\begin{lstlisting}
+template <class T> 
+T square(T x)
+{
+  return x*x; // T musi wiedziec co to '*'
+}
+\end{lstlisting}  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Szablon funkcji}
+  \framesubtitle{Składnia}
+\begin{lstlisting}
+template <class T> 
+T square(T x)
+{
+  return x*x; // T musi wiedziec co to '*'
+}
+
+int a=9;
+square<int>(a);
+\end{lstlisting}  
+nasza klasa \textit{complex} nie wie co to * ...
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Szablon funkcji}
+  \framesubtitle{Domyślny kompilator}
+\begin{lstlisting}
+template <class T> 
+T square(T x)
+{
+  return x*x; // T musi wiedziec co to '*'
+}
+
+double b=9;//kompilator 'domysli sie typu
+square(b);
+\end{lstlisting}  
+
+W przypadku szablonów funkcji można pominąć $<>$ kompilator postara się zdecydować za nas. No chyba, że nie może ... na przykład:
+\vspace{0.1cm}
+\begin{lstlisting}
+template<typename T>
+T my_type_caster_no_sense(double x)
+{
+  T a = x; //rzutowanie na T
+  return a;
+}
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Szablon funkcji}
+  \framesubtitle{Argumenty szablonu}
+  \begin{itemize}
+    \item Typy, \textit{class} lub \textit{typename}
+    \item Wartości całkowite, \textit{int}, \textit{enum} ...
+  \end{itemize}
+  
+\begin{lstlisting}
+template <class T> //typename
+T square(T x)
+{
+  return x*x; // T musi wiedziec co to '*'
+}
+
+template<int V>
+int templated_with_value(double x)
+{
+  return a*V;
+}
+\end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Szablon funkcji}
+  \framesubtitle{Argumenty szablonu - może być kilka}
+  
+  \begin{lstlisting}
+template <class T, int N> //typename
+T pow(T x)
+{
+  T res=1;
+  for(int i=0; i<N; ++i)
+    res *= x;
+  return res;
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+template <int N, class T> //typename
+T pow(T x)
+{
+  T res=1;
+  for(int i=0; i<N; ++i)
+    res *= x;
+  return res;
+}
+\end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Specjalizacja}
+  \framesubtitle{Czyli co robić dla określonych argumentów szablonu}
+
+\begin{lstlisting}
+template<typename T>
+T fun(T x)
+{
+  return 2*x;
+}
+
+template<>
+string fun<string>(string x)
+{
+  return x + " " +x;
+}
+
+
+int main()
+{
+  double a=9;
+  cout << fun(a) << endl;
+  
+  string b="Ala ma kota";
+  cout << fun(b) << endl;
+}
+\end{lstlisting}
+\end{frame}
+
+\subsection{Klasy}
+
+\begin{frame}[fragile]
+  \frametitle{Szablon klasy}
+  \framesubtitle{Przykład}
+\begin{lstlisting}
+class complex_int{//liczba zespolona na int
+  public:
+  complex_int(int r, int i) : real(r), imag(i) {}
+  const int& c_real(){return real;}
+  const int& c_imag(){return imag;}
+  private:
+  int real;
+  int imag;
+};
+\end{lstlisting}
+\begin{lstlisting}
+class complex_double{//liczba zespolona na int
+  public:
+  complex_double(double r, double i) : real(r), imag(i) {}
+  const double& c_real(){return real;}
+  const double& c_imag(){return imag;}
+  private:
+  double real;
+  double imag;
+};
+\end{lstlisting}
+A inne typy? A kontenery?
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Szablon klasy}
+  \framesubtitle{Składnia}
+  
+\begin{lstlisting}
+template <class T>
+class class_name{//cialo oparte o T
+  pyblic:
+  class_name(){}
+  void fun();
+  private:
+  T a;
+  T b;
+};
+
+template<class T>
+void class_name<T>::fun()
+{
+...
+}
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Szablon klasy}
+  \framesubtitle{Różne!}
+  
+\begin{lstlisting}
+template <class T>
+class class_name{//cialo oparte o T
+  pyblic:
+  class_name(){}
+  void fun();
+  private:
+  T a;
+  T b;
+};
+
+...
+class_name<int> != class_name<double>!!!
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Szablon klasy}
+  \framesubtitle{Argumenty}
+    \begin{itemize}
+    \item Typy, \textit{class} lub \textit{typename}
+    \item Wartości całkowite, \textit{int}, \textit{enum} ...
+  \end{itemize}
+  
+\begin{lstlisting}
+template <class T>
+class class_name{//cialo oparte o T
+  pyblic:
+  class_name(){}
+  void fun();
+  private:
+  T a;
+  T b;
+};
+
+template<int V>
+class class_name2{
+  pyblic:
+  class_name(){}
+  void fun();
+  private:
+  int a[V];
+  double b[V];
+  
+};
+\end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Szablon klasy}
+  \framesubtitle{Argumenty szablonu - może być kilka}
+  
+  \begin{lstlisting}
+template <class T, int N> //typename
+class class_name{//cialo oparte o T
+  pyblic:
+  class_name(){}
+  void fun();
+  private:
+  T tab[N];
+};
+\end{lstlisting}
+
+\begin{lstlisting}
+template <int N, class T> //typename
+class class_name{//cialo oparte o T
+  pyblic:
+  class_name(){}
+  void fun();
+  private:
+  T tab[N];
+};
+\end{lstlisting}
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Szablon klasy}
+  \framesubtitle{Specjalizacja, czyli co robić dla określonych argumentów szablonu}
+\begin{lstlisting}
+template<int N>
+class foo{
+  public:
+  foo();
+  void fun();
+  double tab[N];
+};
+
+template<int N>
+foo<N>::foo()
+{}
+
+template<>
+foo<0>::foo()
+{
+  cout << "This will be empty!!!" << endl;
+}
+\end{lstlisting}
+\end{frame}
+
+\section{Metaprogramowanie}
+
+\begin{frame}[fragile]
+  \frametitle{ZŁO!}
+  \framesubtitle{Język w języku}
+  \begin{itemize}
+    \item Okazuje się, że mechanizm szablonów w C++ jest osobnym językiem
+    \item Tak, wewnątrz C++ zaszyto inny język
+    \item Turing Kompletny ...
+    \item Odkryto to przypadkiem
+    \item I tak, ma zastosowania
+    \item Pozwala na wykonanie "programu" w czasie kompilacji - metaprogramowanie!
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Przykład}
+  \framesubtitle{Silnia - klasycznie}
+\begin{lstlisting}
+unsigned int factorial(unsigned int n)
+{
+  cout << "Called with n=" << n << endl;
+  return n == 0 ? 1 : n * factorial(n - 1); 
+}
+
+int main()
+{
+  cout <<" Finally the factorial is:" << factorial(4) << endl;  
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Przykład}
+  \framesubtitle{Silnia - inaczej}
+\begin{lstlisting}
+template <unsigned int n>
+class factorial {
+public:
+  static const unsigned long long value = n * factorial<n-1>::value;
+};
+
+template <>
+class factorial<0> {
+public:
+  static const unsigned long long value = 1;
+};
+
+
+int main()
+{
+  std::cout << factorial<5>::value << "\n";
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Częściowa Specjalizacja}
+
+\begin{lstlisting}
+template<int N, class T>
+class foo{
+  public:
+  foo();
+  void fun();
+  T tab[N];
+};
+template<class T> //specialized for N=0
+class foo<0,T>{
+  public:
+  foo();
+  void fun();
+  T tab[0];
+};
+template<int N, class T>
+foo<N,T>::foo()
+{}
+template<class T>
+foo<0,T>::foo()
+{
+  cout << "This will be empty!!!" << endl;
+}
+\end{lstlisting}
+\end{frame}
+\end{document}
