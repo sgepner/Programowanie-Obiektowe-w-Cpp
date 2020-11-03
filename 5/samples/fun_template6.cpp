@@ -7,11 +7,6 @@ using namespace std;
 template<int V>
 double templated_with_value(double x)//, int V)
 {
-//T tab[V];
-//  double a=1;
-//  for(int i=1; i<V, ++i)
-//    a*=i;
-//  return a;
   return x*V;
 }
 
