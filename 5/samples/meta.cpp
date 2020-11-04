@@ -1,5 +1,3 @@
-//Funkcja square dla kazdego typu
-
 #include <iostream>
 #include <stdio.h>
 using namespace std;
@@ -12,5 +10,5 @@ unsigned int factorial(unsigned int n)
 
 int main()
 {
-  cout << endl << " Finally the factorial is:" << factorial(10) << endl;  
+  cout << endl << " Finally the factorial is:" << factorial(7) << endl;  
 }

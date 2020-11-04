@@ -1,5 +1,3 @@
-//Funkcja square dla kazdego typu
-
 #include <iostream>
 #include <stdio.h>
 using namespace std;
@@ -18,8 +16,7 @@ class factorial<0> {
 	static const unsigned long long value = 1;
 };
 
-
 int main()
 {
-  std::cout << factorial<5>::value << "\n";
+  std::cout << factorial<10>::value << "\n";
 }
