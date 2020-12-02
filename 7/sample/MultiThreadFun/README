@@ -1,0 +1,7 @@
+## To build and run do:
+
+mkdir build
+cd build
+cmake ../
+./mproc_overlord
+
