@@ -1,0 +1,368 @@
+\documentclass[10pt]{beamer}
+
+\usepackage[english,polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+
+\usepackage{define}
+
+\eventtitle{Programowanie obiektowe w języku C++}
+\title{Programowanie obiektowe w języku C++}
+\author[shortname]{Stanis{\l}aw Gepner}
+\institute[shortinst]{sgepner@meil.pw.edu.pl}
+\date{}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{navigation symbols}[]
+
+\begin{document}
+
+\frame{
+    \titlepage
+}
+
+\section{Wyjątki}
+
+\begin{frame}
+  \frametitle{Wyjątki}
+  
+  \begin{itemize}
+		\item Metoda przeniesienia kontroli do w przypadku wystąpienia wyjątkowych sytuacji
+		\item Wykorzystujemy blok \textit{try\{\}catch()\{\}}
+		\item Wyjątek podniesiony w sekcji \textit{try} przenosi kontrolę do odpowiedniej sekcji \textit{catch()}
+  \end{itemize}
+  \vspace{0.2cm}
+  \begin{tikzpicture}[scale=2, node distance = 2cm, auto]
+    % Place nodes
+    \node [circle, draw, fill=black, minimum size=0.2cm] (A) at (0,0) {};
+    \node [circle, draw, fill=black, minimum size=0.2cm] (END) at (5,0) {};
+    \node [] (END2) at (5.5,0) {};
+    \node [rectangle, draw, fill=black, minimum size=0.2cm, text=white,aspect=2] (B) at (0.5,0) {try\{};
+    \path [draw, -latex, thick] (A) -- (B);
+    \node [rectangle, draw, fill=black, minimum size=0.2cm, text=white,aspect=2] (C) at (1.3,0) {\parbox{1.5cm}{my\\ protected code}};
+    \path [draw, -latex, thick] (B) -- (C);
+    \node [rectangle, draw, fill=black, minimum size=0.2cm, text=white,aspect=2] (D) at (2.5,0) {\parbox{2cm}
+    {\centering tu się mogą dziać złe rzeczy!\\ \textbf{throw}}};
+    \path [draw, -latex, thick] (C) -- (D);
+    \node [rectangle, draw, fill=black, minimum size=0.2cm, text=white,aspect=2] (E) at (3.7,0) {\parbox{1.5cm}{my\\ protected code}};
+    \path [draw, -latex, thick] (D) -- (E);
+    \node [rectangle, draw, fill=black, minimum size=0.2cm, text=white,aspect=2] (F) at (4.4,0) {\}};
+    \path [draw, -latex, thick] (E) -- (F);
+    \path [draw, -latex, thick] (F) -- (END);
+    \path [draw, -latex, thick] (F) -- (END2);
+    
+    \node [rectangle, draw, fill=black, minimum size=0.2cm, text=white,aspect=2] (A) at (2,-1) {catch(arg)\{};
+    \path [draw, -latex, thick] (D) -- (A);
+    \node [rectangle, draw, fill=black, minimum size=0.2cm, text=white,aspect=2] (B) at (3.5,-1) {Obsługuję wyjątek};    
+    \path [draw, -latex, thick] (A) -- (B);
+    \node [rectangle, draw, fill=black, minimum size=0.2cm, text=white,aspect=2] (C) at (4.6,-1) {\}};
+    \path [draw, -latex, thick] (B) -- (C);
+    \path [draw, -latex, thick] (C) -| (END);
+
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Wyjątki}
+  
+\begin{itemize}
+	\item można rzucać prawie wszystkim
+	\item a łapać, określony typ, ale nie tylko
+\end{itemize}  
+  
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main()
+{
+  try
+  {
+    throw 2;
+  }
+  catch (int e)
+  {
+    cout << "An exception occurred. Exception Nr. " << e << '\n';
+  }
+  return 0;
+}
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Wyjątki}
+  
+\begin{itemize}
+	\item \textit{catch(...)\{} złapie 'co kolwiek'
+\end{itemize}  
+  
+\begin{lstlisting}
+#include <iostream>
+#include <string>
+using namespace std;
+int main(){
+  try  {
+  	int a;
+  	cin >> a;
+  	switch(a)
+  	{
+  		case 1:
+  			throw 5;
+  		case 2:
+  			throw 'a';
+  		case 3:
+  			throw string("String");
+  		case 4:
+  			throw 5.0;
+  	}
+  }
+  catch (int e){ cout << "An int: " << e <<endl;}
+  catch (char e){ cout << "Char: " << e << endl;}
+  catch (string e){ cout << "String " << e << endl;}
+  catch (...){ cout << " Default exception!!" << endl;}
+  return 0;}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Wyjątki}
+  
+\begin{itemize}
+	\item Można zagnieżdżać
+\end{itemize}  
+  
+\begin{lstlisting}
+try{
+	try{
+		//Code that does some serious stuff
+		throw 4;
+	}
+	catch (int e){
+		cout << "App thrown an exeption, terhrowing!" <<endl;
+		ostringstream os;
+		os << "Value is: " << e;
+		throw os.str();
+	}
+}
+catch (string e)
+{
+  cout << "An exception occurred. String " << e << endl;
+}
+catch (...)//domyslnie
+{
+	cout << " Default exception!!" << endl;
+}
+\end{lstlisting}
+\end{frame}
+
+\subsection{exception}
+
+\begin{frame}[fragile]
+  \frametitle{exception}
+  
+\begin{itemize}
+	\item $include <exception>$
+\end{itemize}  
+  
+\begin{lstlisting}
+class exception {
+public:
+  exception () throw();
+  exception (const exception&) throw();
+  exception& operator= (const exception&) throw();
+  virtual ~exception() throw();
+  virtual const char* what() const throw();
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{exception}
+\begin{itemize}
+	\item Możemy tworzyć własne!
+\end{itemize}  
+  
+\begin{lstlisting}
+class myexception: public exception
+{
+public:
+	myexception(const string& s): message(s) {}
+	virtual ~myexception() throw(){}
+private:
+	string message;
+  virtual const char* what() const throw()
+  {
+    return message.c_str();
+  }
+};
+\end{lstlisting}
+
+\end{frame}
+
+\section{Wątki i procesy}
+
+\begin{frame}
+	\frametitle{Proces vs Wątek}
+	\framesubtitle{Gdy jest nas wielu}
+	\begin{columns}
+	\begin{column}{0.5\textwidth}
+	\centering \textbf{Process}
+	\begin{itemize}
+		\item Niezależny
+		\item Własna, niedzielona przestrzeń adresowa
+		\item Komunikacja tylko przez system (shared memory, semaphores)
+	\end{itemize}
+	
+	\centering \textbf{Wątki}
+	\begin{itemize}
+		\item Istnieje w procesie
+		\item Wspólna przestrzeń adresowa
+	\end{itemize}
+	\end{column}
+	\begin{column}{0.5\textwidth}
+	\centering
+  \begin{tikzpicture}[scale=2, auto]
+    % Place nodes
+    \node [circle, draw, fill=blue!50, minimum size=3cm] (A) at (0,0) {};
+    \node [font=\small, anchor=south] at ($(A)+(0,0.4)$) {Process 1};
+		\path [draw, decorate,decoration=snake, thick] (-0.4,-0.5) -- node [] {\tiny T1} (-0.4,0.4);
+		\path [draw, decorate,decoration=snake, thick] (-0.1,0.1) -- node [] {\tiny T2} (-0.1,-0.4);
+		\path [draw, decorate,decoration=snake, thick] (0.35,-0.2) -- node [] {\tiny T3} (0.35,0.2);
+    \node [circle, draw, fill=blue!50, minimum size=3cm] (A) at (0,-1.6) {};
+    \node [font=\small, anchor=south] at ($(A)+(0,0.4)$) {Process 2};
+		\path [draw, decorate,decoration=snake, thick] (-0.5,-1.8) -- node [] {\tiny T1} (-0.5,-1.2);
+		\path [draw, decorate,decoration=snake, thick] (-0.1,-2.1) -- node [] {\tiny T2} (-0.1,-1.4);
+\end{tikzpicture}
+	\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Wątek}
+	\framesubtitle{Nowy wątek}
+	\begin{columns}
+	\begin{column}{0.5\textwidth}
+\begin{lstlisting}
+#include <thread>
+
+void foo(){
+  for(int i=0; i<10; ++i){
+  	cout << "foo says: foo sleeps " << i << endl;
+  	sleep ( 1 );
+  }
+}
+void bar(int x){
+  for(int i=0; i<10; ++i){
+  	cout << "bar says: x=" << x << " bar sleeps " << i << endl;
+  	sleep ( 1 );
+  }
+}
+...
+std::thread first (foo);
+std::thread second (bar,0);
+
+\end{lstlisting}
+	\end{column}
+	\begin{column}{0.5\textwidth}
+	\centering
+\begin{tikzpicture}[scale=2, node distance = 2cm, auto]
+    % Place nodes
+    \node [circle, draw, fill=black, minimum size=0.4cm,inner sep=0pt, outer sep=0pt] (A) at (0,0) {};
+    \node [circle, draw, fill=black, minimum size=0.2cm,inner sep=0pt, outer sep=0pt] (AA) at (0,-0.3) {};
+    \node [] (B) at (0,-1.5) {};
+    \node [] (C1) at (-1,-1.5) {};
+    \node [] (C2) at (1,-1.5) {};
+    \path [draw, -latex, very thick] (A) -- node [] (C) {} (B);
+    \node [rotate=-90] at ($(C)+(0.05,-0.05)$) {\small main thread};
+    \path [draw, -latex] (AA) -| node [near start] (C) {}(C1);
+    \node [] at ($(C)+(0.0,0.15)$) {\small \textit{foo()}};
+    \path [draw, -latex] (AA) -| node [near start] (C) {}(C2);
+    \node [] at ($(C)+(0.0,0.03)$) {\small \textit{bar(0)}};
+%    \node [] (C) at (1,-0.7) {};
+%    \path [draw, -latex, thick] (B) -| node [near start] {yes} (C);
+%    \path [draw, -latex, thick] (C) |- (AA);
+%    \node [inner sep=0pt, outer sep=0pt] (BB) at (0,-2.5) {};
+%    \path [draw, -latex, thick] (B) -> node [near start] {no} (BB);
+\end{tikzpicture}
+	\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Wątki}
+	\framesubtitle{\textit{join detach}}
+	\begin{columns}
+	\begin{column}{0.5\textwidth}
+\begin{lstlisting}
+#include <thread>
+
+...
+std::thread first (foo);
+std::thread second (bar,0);
+// detach first from main
+first.detach()
+...
+//main thread does sth
+...
+// wait for second to terminate
+second.join()
+
+
+
+\end{lstlisting}
+	\end{column}
+	\begin{column}{0.5\textwidth}
+	\centering
+\begin{tikzpicture}[scale=2, node distance = 2cm, auto]
+    % Place nodes
+    \node [circle, draw, fill=black, minimum size=0.4cm,inner sep=0pt, outer sep=0pt] (A) at (0,0) {};
+    \node [circle, draw, fill=black, minimum size=0.2cm,inner sep=0pt, outer sep=0pt] (AA) at (0,-0.3) {};
+    \node [] (B) at (0,-2.5) {};
+\tikzset{cross/.style={cross out, draw=black, minimum size=1*(#1-\pgflinewidth),
+inner sep=0pt, outer sep=0pt, very thick}, cross/.default={10pt}}
+    \node [draw,circle,cross,red] (C1) at (-1,-1.5) {};
+    \node [] at ($(C1)+(0.0,-0.15)$) {\small first terminates};    
+    \node [inner sep=0pt, outer sep=0pt] (C2) at (1,-1.8) {};
+    \path [draw, -latex, very thick] (A) -- node [] (C) {} (B);
+    \node [rotate=-90] at ($(C)+(0.05,0.4)$) {\small main thread};
+    \path [draw, -latex] (AA) -| node [near start] (C) {}(C1);
+    \node [] at ($(C)+(0.0,0.15)$) {\small \textit{foo()}};
+    \path [draw, ] (AA) -| node [near start] (C) {}(C2);
+    \node [] at ($(C)+(0.0,0.03)$) {\small \textit{bar(0)}};
+    \node [circle, draw, fill=black, minimum size=0.2cm,inner sep=0pt, outer sep=0pt] (AA) at (0,-1.8) {};
+    \node [] at ($(AA)+(0.4,-0.2)$) {\parbox{1.5cm}{\centering \small main waits for second}};
+    \path [draw, -latex] (C2) -- (AA);
+
+\end{tikzpicture}
+	\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Wątki}
+	\framesubtitle{Dostęp do zasobów}
+
+\begin{itemize}
+	\item Wątki współdzielą pamięć (i inne)
+	\item Należy unikać 'wyścigu'
+	\item \textit{mutex}
+	\item \textit{lock} i \textit{unlock}
+\end{itemize}
+
+\end{frame}
+
+\section{Process}
+
+\begin{frame}[fragile]
+	\frametitle{Procesy}
+	\framesubtitle{fork}
+  \begin{itemize}
+    \item fork
+    \item morph
+  \end{itemize}
+
+
+\end{frame}
+
+\end{document}
