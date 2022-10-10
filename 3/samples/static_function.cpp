@@ -10,7 +10,7 @@ class foobar{
     {
       cout << "a=" << a << endl;
       a = new_d;
-      b = a; // tu nie zadziala
+      //b = a; // tu nie zadziala
     }
 };
 

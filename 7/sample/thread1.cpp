@@ -12,6 +12,7 @@ void foo()
   	cout << "foo says: foo sleeps " << i << endl;
   	sleep ( 2 );
   }
+  std::cout << "foo completed.\n";
 }
 
 void bar(int x)
@@ -21,6 +22,7 @@ void bar(int x)
   	cout << "bar says: x=" << x << " bar sleeps " << i << endl;
   	sleep ( 1 );
   }
+  std::cout << "bar completed.\n";
 }
 
 int main() 

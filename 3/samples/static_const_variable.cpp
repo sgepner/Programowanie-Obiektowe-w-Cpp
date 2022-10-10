@@ -14,7 +14,7 @@ int main()
   // ale tez:
 
   cout << foobar::a << endl;
-  f1.a = 5;
+// f1.a = 5;
 //  cout << " " << &(f1.a) << " " << &f2.a << " " << &f3.a << endl;
   cout << &f1.b << " " << &f2.b << " " << &f3.b << endl;
 }

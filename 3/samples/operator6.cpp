@@ -17,7 +17,8 @@ class foo{
 foo operator+(const foo& lewy, const foo& prawy)
 {
   cout << lewy.a << " " << prawy.a << endl;
-  foo tmp; tmp = lewy;
+  foo tmp;
+  tmp = lewy;
   tmp.a += prawy.a;
   return tmp;
 }

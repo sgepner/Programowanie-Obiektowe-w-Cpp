@@ -20,7 +20,7 @@ int main(){
   
   cout << f1.m_a << " " << f2.m_a << endl;
   
-  //foo f3 = f1+f2;
+  foo f3 = f1+f2;
   f1+f2;
   cout << f1.m_a << " " << f2.m_a << endl;
 }
